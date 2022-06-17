@@ -14,6 +14,8 @@ import java.util.List;
  */
 public interface DataSourceService {
 
+    void test(DataSourceParam dataSourceParam);
+
     void addDataSource(DataSourceParam dataSourceParam);
 
     void updateDataSource(Long dataSourceId, DataSourceParam dataSourceParam);
