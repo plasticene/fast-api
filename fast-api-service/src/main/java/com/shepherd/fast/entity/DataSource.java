@@ -20,7 +20,7 @@ public class DataSource {
     private String name;
     private String host;
     private String port;
-    private String database;
+    private String databaseName;
     private String userName;
     private String password;
     private Integer type;
