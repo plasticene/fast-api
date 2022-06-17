@@ -35,8 +35,11 @@ public class GlobalExceptionHandler {
     public ResponseVO exceptionHandler(Exception e){
         // 处理业务异常
         if (e instanceof BizException) {
-            BizException businessException = (BizException) e;
-            return ResponseVO.failure(businessException.getCode(), businessException.getMessage());
+            BizException bizException = (BizException) e;
+            if (bizException.getCode() == null) {
+                bizException.setCode(ResponseStatusEnum.BAD_REQUEST.getCode());
+            }
+            return ResponseVO.failure(bizException.getCode(), bizException.getMessage());
         } else if (e instanceof MethodArgumentNotValidException) {
             MethodArgumentNotValidException methodArgumentNotValidException = (MethodArgumentNotValidException) e;
             Map<String, String> map = new HashMap<>();

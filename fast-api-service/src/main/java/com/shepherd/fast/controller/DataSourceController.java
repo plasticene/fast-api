@@ -29,11 +29,10 @@ public class DataSourceController {
     @Resource
     private DataSourceService dataSourceService;
 
-    @GetMapping("/test")
-    @ApiOperation("测试")
-    public String test() {
-        System.out.println("1111");
-        return null;
+    @PostMapping("/test")
+    @ApiOperation("测试连接")
+    public void  test(@RequestBody @Validated DataSourceParam dataSourceParam) {
+        dataSourceService.test(dataSourceParam);
     }
 
 
