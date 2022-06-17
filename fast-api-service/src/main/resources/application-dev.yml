@@ -19,8 +19,6 @@ spring:
   redis:
     host: 110.42.224.58
     port: 6379
-  profiles:
-    active: dev
 
 
 #mybatis
@@ -48,4 +46,5 @@ mybatis-plus:
     #sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
     #自定义填充策略接口实现
     #meta-object-handler: com.baomidou.springboot.xxx
+
 
