@@ -3,6 +3,7 @@ package com.shepherd.fast.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.shepherd.fast.anno.ResponseResultBody;
 import com.shepherd.fast.dto.DataSourceDTO;
+import com.shepherd.fast.dto.TableInfo;
 import com.shepherd.fast.param.DataSourceParam;
 import com.shepherd.fast.query.DataSourceQuery;
 import com.shepherd.fast.service.DataSourceService;
@@ -25,7 +26,6 @@ import java.util.List;
 @Api(tags = "数据源管理")
 public class DataSourceController {
 
-
     @Resource
     private DataSourceService dataSourceService;
 
@@ -34,7 +34,6 @@ public class DataSourceController {
     public void  test(@RequestBody @Validated DataSourceParam dataSourceParam) {
         dataSourceService.test(dataSourceParam);
     }
-
 
     @PostMapping
     @ApiOperation("添加数据源")
@@ -59,6 +58,12 @@ public class DataSourceController {
     public IPage<DataSourceDTO> getList(DataSourceQuery query) {
         IPage<DataSourceDTO> page = dataSourceService.getList(query);
         return page;
+    }
+
+    @GetMapping("/{dataSourceId}/{databaseName}/table")
+    @ApiOperation("查询数据库表信息")
+    public List<TableInfo> getTableInfo(@PathVariable("dataSourceId") Long dataSourceId, @PathVariable("databaseName") String databaseName) {
+        return dataSourceService.getTableInfo(dataSourceId, databaseName);
     }
 
 }

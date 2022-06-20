@@ -8,11 +8,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.shepherd.fast.constant.CommonConstant;
 import com.shepherd.fast.dao.DataSourceDAO;
 import com.shepherd.fast.dto.DataSourceDTO;
+import com.shepherd.fast.dto.TableInfo;
 import com.shepherd.fast.entity.DataSource;
 import com.shepherd.fast.enums.DatabaseEnum;
+import com.shepherd.fast.enums.DatabaseSchemaEnum;
 import com.shepherd.fast.exception.BizException;
 import com.shepherd.fast.param.DataSourceParam;
 import com.shepherd.fast.query.DataSourceQuery;
+import com.shepherd.fast.service.DataQueryService;
 import com.shepherd.fast.service.DataSourceService;
 import com.shepherd.fast.utils.FdsBeanUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +46,8 @@ import java.util.stream.Collectors;
 public class DataSourceServiceImpl implements DataSourceService {
     @Resource
     private DataSourceDAO dataSourceDAO;
+    @Resource
+    private DataQueryService dataQueryService;
 
 
     @Override
@@ -51,7 +57,7 @@ public class DataSourceServiceImpl implements DataSourceService {
         try {
             DatabaseEnum databaseEnum = DatabaseEnum.getType(dataSourceParam.getType());
             Class.forName(databaseEnum.getDriverClass());
-            con = DriverManager.getConnection(String.format(databaseEnum.getUrl(), dataSourceParam.getHost(), dataSourceParam.getPort()), dataSourceParam.getUserName(), dataSourceParam.getPassword());
+            con = DriverManager.getConnection(String.format(databaseEnum.getTestUrl(), dataSourceParam.getHost(), dataSourceParam.getPort()), dataSourceParam.getUserName(), dataSourceParam.getPassword());
             PreparedStatement ps = null;
             ResultSet rs = null;
             String sql = databaseEnum.getSql();
@@ -128,6 +134,23 @@ public class DataSourceServiceImpl implements DataSourceService {
         return result;
     }
 
+    @Override
+    public List<TableInfo> getTableInfo(Long dataSourceId, String databaseName) {
+        DataSourceDTO ds = getDataSourceDTO(dataSourceId);
+        if (Objects.isNull(ds)) {
+            throw new BizException("数据源不存在");
+        }
+        ds.setSelectDatabase(databaseName);
+        List<TableInfo> tableList = dataQueryService.getTableList(ds);
+        return tableList;
+    }
+
+
+    public DataSourceDTO getDataSourceDTO(Long dataSourceId) {
+        DataSource dataSource = dataSourceDAO.selectById(dataSourceId);
+        return toDataSourceDTO(dataSource);
+    }
+
     List<DataSourceDTO> toDataSourceDTOList(List<DataSource> dataSources) {
         List<DataSourceDTO> dataSourceDTOList = new ArrayList<>();
         if (CollectionUtils.isEmpty(dataSources)) {
@@ -139,5 +162,15 @@ public class DataSourceServiceImpl implements DataSourceService {
             dataSourceDTOList.add(dataSourceDTO);
         });
         return dataSourceDTOList;
+    }
+
+    DataSourceDTO toDataSourceDTO(DataSource dataSource) {
+        if (dataSource == null) {
+            return null;
+        }
+        DataSourceDTO dataSourceDTO = FdsBeanUtils.copy(dataSource, DataSourceDTO.class);
+        dataSourceDTO.setDatabaseList(JSONObject.parseArray(dataSource.getDatabaseName(), String.class));
+        return dataSourceDTO;
+
     }
 }

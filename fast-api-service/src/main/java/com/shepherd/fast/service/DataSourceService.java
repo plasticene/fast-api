@@ -2,6 +2,7 @@ package com.shepherd.fast.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.shepherd.fast.dto.DataSourceDTO;
+import com.shepherd.fast.dto.TableInfo;
 import com.shepherd.fast.param.DataSourceParam;
 import com.shepherd.fast.query.DataSourceQuery;
 
@@ -23,6 +24,8 @@ public interface DataSourceService {
     void batchDelDataSource(List<Long> dataSourceIds);
 
     IPage<DataSourceDTO> getList(DataSourceQuery query);
+
+    List<TableInfo> getTableInfo(Long dataSourceId, String databaseName);
 
 
 }
