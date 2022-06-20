@@ -96,6 +96,13 @@
             <version>0.2.4</version>
         </dependency>
 
+        <!-- cache -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <build>
