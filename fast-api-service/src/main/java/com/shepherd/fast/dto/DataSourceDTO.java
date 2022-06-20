@@ -37,6 +37,8 @@ public class DataSourceDTO {
     private Date createTime;
     @ApiModelProperty("更新时间")
     private Date updateTime;
+    @ApiModelProperty("选择的数据库")
+    private String selectDatabase;
 
 
 }
