@@ -12,13 +12,14 @@ import com.shepherd.fast.dto.DataSourceDTO;
 import com.shepherd.fast.dto.TableInfo;
 import com.shepherd.fast.entity.DataSource;
 import com.shepherd.fast.enums.DatabaseEnum;
-import com.shepherd.fast.enums.DatabaseSchemaEnum;
 import com.shepherd.fast.exception.BizException;
 import com.shepherd.fast.param.DataSourceParam;
+import com.shepherd.fast.query.BaseQuery;
 import com.shepherd.fast.query.DataSourceQuery;
 import com.shepherd.fast.service.DataQueryService;
 import com.shepherd.fast.service.DataSourceService;
 import com.shepherd.fast.utils.FdsBeanUtils;
+import com.shepherd.fast.vo.DataResultVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -155,6 +156,17 @@ public class DataSourceServiceImpl implements DataSourceService {
         ds.setSelectDatabase(databaseName);
         List<Column> columns = dataQueryService.getTableStruct(ds, tableName);
         return columns;
+    }
+
+    @Override
+    public DataResultVO getTableData(Long dataSourceId, String databaseName, String tableName, BaseQuery query) {
+        DataSourceDTO ds = getDataSourceDTO(dataSourceId);
+        if (Objects.isNull(ds)) {
+            throw new BizException("数据源不存在");
+        }
+        ds.setSelectDatabase(databaseName);
+        DataResultVO dataResultVO = dataQueryService.getTableData(ds, tableName, query);
+        return dataResultVO;
     }
 
 

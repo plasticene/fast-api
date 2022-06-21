@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  * @date 2022/6/20 10:32
  */
 @Getter
-public enum DatabaseSchemaEnum {
+public enum DatabaseSqlEnum {
 
 
     /**
@@ -33,7 +33,21 @@ public enum DatabaseSchemaEnum {
     CLICKHOUSE_TABLE_COLUMN(1,"ClickHouse", SqlTypeConstant.TABLE_STRUCT,"select name, replaceRegexpAll" +
             "(`type`, 'Nullable\\\\((.*)\\\\)', '\\\\1') AS dataType, replaceRegexpAll(`type`, 'Nullable\\\\((.*)\\\\)', '\\\\1')" +
             " AS columnType, comment from system.columns where database='%s' and table='%s'"
+    ),
+
+    MYSQL_TABLE_DATA(0, "MySQL", SqlTypeConstant.TABLE_DATA, "select * from %s limit %s"
+    ),
+
+    CLICKHOUSE_TABLE_DATA(1, "ClickHouse", SqlTypeConstant.TABLE_DATA, "select * from %s limit %s"
+    ),
+
+    MYSQL_TABLE_COUNT(0, "MySQL", SqlTypeConstant.TABLE_COUNT, "select count(*) AS total from %s"
+    ),
+
+    CLICKHOUSE_TABLE_COUNT(1, "ClickHouse", SqlTypeConstant.TABLE_COUNT, "select count(*) AS total from %s"
     );
+
+
 
 
     // 数据库类型
@@ -45,15 +59,15 @@ public enum DatabaseSchemaEnum {
     // 查询sql
     String sql;
 
-    DatabaseSchemaEnum(Integer code, String name, Integer sqlType, String sql) {
+    DatabaseSqlEnum(Integer code, String name, Integer sqlType, String sql) {
         this.code = code;
         this.name = name;
         this.sqlType = sqlType;
         this.sql = sql;
     }
 
-    public static DatabaseSchemaEnum getType(Integer code, Integer sqlType) {
-        return Stream.of(DatabaseSchemaEnum.values()).filter(bean -> bean.getCode().equals(code) && bean.getSqlType().equals(sqlType)).findFirst().orElse(null);
+    public static DatabaseSqlEnum getType(Integer code, Integer sqlType) {
+        return Stream.of(DatabaseSqlEnum.values()).filter(bean -> bean.getCode().equals(code) && bean.getSqlType().equals(sqlType)).findFirst().orElse(null);
     }
 
 

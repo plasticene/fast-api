@@ -9,6 +9,7 @@ import lombok.Data;
  */
 @Data
 public class Column {
+    private Integer index;
     private String columnName;
     private String dataType;
     private String columnType;

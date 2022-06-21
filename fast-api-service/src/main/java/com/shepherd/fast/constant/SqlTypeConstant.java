@@ -10,4 +10,8 @@ public interface SqlTypeConstant {
     Integer DATABASE_TABLE = 0;
 
     Integer TABLE_STRUCT = 1;
+
+    Integer TABLE_DATA = 2;
+
+    Integer TABLE_COUNT = 3;
 }

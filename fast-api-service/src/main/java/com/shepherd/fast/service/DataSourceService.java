@@ -5,7 +5,9 @@ import com.shepherd.fast.dto.Column;
 import com.shepherd.fast.dto.DataSourceDTO;
 import com.shepherd.fast.dto.TableInfo;
 import com.shepherd.fast.param.DataSourceParam;
+import com.shepherd.fast.query.BaseQuery;
 import com.shepherd.fast.query.DataSourceQuery;
+import com.shepherd.fast.vo.DataResultVO;
 
 import java.util.List;
 
@@ -29,6 +31,8 @@ public interface DataSourceService {
     List<TableInfo> getTableInfo(Long dataSourceId, String databaseName);
 
     List<Column> getTableStruct(Long dataSourceId, String databaseName, String tableName);
+
+    DataResultVO getTableData(Long dataSourceId, String databaseName, String tableName, BaseQuery query);
 
 
 }

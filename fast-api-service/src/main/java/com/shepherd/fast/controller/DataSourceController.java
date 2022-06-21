@@ -6,8 +6,10 @@ import com.shepherd.fast.dto.Column;
 import com.shepherd.fast.dto.DataSourceDTO;
 import com.shepherd.fast.dto.TableInfo;
 import com.shepherd.fast.param.DataSourceParam;
+import com.shepherd.fast.query.BaseQuery;
 import com.shepherd.fast.query.DataSourceQuery;
 import com.shepherd.fast.service.DataSourceService;
+import com.shepherd.fast.vo.DataResultVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -73,6 +75,13 @@ public class DataSourceController {
     public List<Column> getTableStruct(@RequestParam("dataSourceId") Long dataSourceId, @RequestParam("databaseName")
             String databaseName, @RequestParam("tableName") String tableName) {
         return dataSourceService.getTableStruct(dataSourceId, databaseName, tableName);
+    }
+
+    @GetMapping("/table/data")
+    @ApiOperation("查询表数据")
+    public DataResultVO getTableData(@RequestParam("dataSourceId") Long dataSourceId, @RequestParam("databaseName")
+            String databaseName, @RequestParam("tableName") String tableName, BaseQuery query) {
+        return dataSourceService.getTableData(dataSourceId, databaseName, tableName, query);
 
     }
 
