@@ -20,6 +20,10 @@ public enum DatabaseSchemaEnum {
             " table_comment else table_name  end tableComment ," +
             " table_name as 'tableName' from information_schema.TABLES " +
             " where TABLE_SCHEMA = '%s'"
+    ),
+
+    CLICKHOUSE_TABLE(1,"ClickHouse","SELECT name as tableComment, name AS tableName FROM `system`.tables " +
+            " WHERE database = '%s'"
     );
 
 
