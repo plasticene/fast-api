@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.shepherd.fast.constant.CommonConstant;
 import com.shepherd.fast.dao.DataSourceDAO;
+import com.shepherd.fast.dto.Column;
 import com.shepherd.fast.dto.DataSourceDTO;
 import com.shepherd.fast.dto.TableInfo;
 import com.shepherd.fast.entity.DataSource;
@@ -143,6 +144,17 @@ public class DataSourceServiceImpl implements DataSourceService {
         ds.setSelectDatabase(databaseName);
         List<TableInfo> tableList = dataQueryService.getTableList(ds);
         return tableList;
+    }
+
+    @Override
+    public List<Column> getTableStruct(Long dataSourceId, String databaseName, String tableName) {
+        DataSourceDTO ds = getDataSourceDTO(dataSourceId);
+        if (Objects.isNull(ds)) {
+            throw new BizException("数据源不存在");
+        }
+        ds.setSelectDatabase(databaseName);
+        List<Column> columns = dataQueryService.getTableStruct(ds, tableName);
+        return columns;
     }
 
 

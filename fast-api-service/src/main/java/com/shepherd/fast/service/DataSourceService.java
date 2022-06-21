@@ -1,6 +1,7 @@
 package com.shepherd.fast.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.shepherd.fast.dto.Column;
 import com.shepherd.fast.dto.DataSourceDTO;
 import com.shepherd.fast.dto.TableInfo;
 import com.shepherd.fast.param.DataSourceParam;
@@ -26,6 +27,8 @@ public interface DataSourceService {
     IPage<DataSourceDTO> getList(DataSourceQuery query);
 
     List<TableInfo> getTableInfo(Long dataSourceId, String databaseName);
+
+    List<Column> getTableStruct(Long dataSourceId, String databaseName, String tableName);
 
 
 }

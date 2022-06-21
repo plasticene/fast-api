@@ -2,6 +2,7 @@ package com.shepherd.fast.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.shepherd.fast.anno.ResponseResultBody;
+import com.shepherd.fast.dto.Column;
 import com.shepherd.fast.dto.DataSourceDTO;
 import com.shepherd.fast.dto.TableInfo;
 import com.shepherd.fast.param.DataSourceParam;
@@ -60,10 +61,21 @@ public class DataSourceController {
         return page;
     }
 
-    @GetMapping("/{dataSourceId}/{databaseName}/table")
+    @GetMapping("/database/table")
     @ApiOperation("查询数据库表信息")
-    public List<TableInfo> getTableInfo(@PathVariable("dataSourceId") Long dataSourceId, @PathVariable("databaseName") String databaseName) {
+    public List<TableInfo> getTableInfo(@RequestParam("dataSourceId") Long dataSourceId, @RequestParam("databaseName") String databaseName) {
         return dataSourceService.getTableInfo(dataSourceId, databaseName);
     }
+
+
+    @GetMapping("/table/struct")
+    @ApiOperation("查询表结构信息")
+    public List<Column> getTableStruct(@RequestParam("dataSourceId") Long dataSourceId, @RequestParam("databaseName")
+            String databaseName, @RequestParam("tableName") String tableName) {
+        return dataSourceService.getTableStruct(dataSourceId, databaseName, tableName);
+
+    }
+
+
 
 }
