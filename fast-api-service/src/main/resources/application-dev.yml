@@ -48,3 +48,8 @@ mybatis-plus:
     #meta-object-handler: com.baomidou.springboot.xxx
 
 
+multilevel:
+  cache:
+    accessExpireTime: 60
+    maxCapacityRate: 0.2
+    initRate: 0.5
