@@ -50,6 +50,10 @@ mybatis-plus:
 
 multilevel:
   cache:
-    accessExpireTime: 60
+    accessExpireTime: 180
     maxCapacityRate: 0.2
     initRate: 0.5
+    name: multilevel-cache
+    topic: multilevel-cache-topic
+    redisName: multilevel-redis-cache
+    caffeineName: multilevel-caffeine-cache
