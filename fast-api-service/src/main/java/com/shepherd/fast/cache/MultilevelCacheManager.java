@@ -30,7 +30,7 @@ import static org.springframework.data.redis.cache.RedisCacheConfiguration.defau
  * @date 2022/6/22 10:21
  */
 @Component
-@EnableConfigurationProperties(MultilevelCacheProperties.class)
+//@EnableConfigurationProperties(MultilevelCacheProperties.class)
 public class MultilevelCacheManager {
 
     private static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
@@ -48,11 +48,11 @@ public class MultilevelCacheManager {
 
 
     @Bean
-    RedisCache redisCache (@Autowired RedisConnectionFactory redisConnectionFactory) {
+    public RedisCache redisCache (@Autowired RedisConnectionFactory redisConnectionFactory) {
         RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory);
         RedisCacheConfiguration redisCacheConfiguration = defaultCacheConfig();
         redisCacheConfiguration = redisCacheConfiguration.entryTtl(Duration.of(multilevelCacheProperties.getAccessExpireTime(), ChronoUnit.SECONDS));
-        RedisCache redisCache = new CustomRedisCache("multilevel-redis-cache", redisCacheWriter, redisCacheConfiguration);
+        RedisCache redisCache = new CustomRedisCache(multilevelCacheProperties.getRedisName(), redisCacheWriter, redisCacheConfiguration);
         return redisCache;
     }
 
@@ -63,10 +63,10 @@ public class MultilevelCacheManager {
      * @return
      */
     @Bean
-    CaffeineCache caffeineCache() {
+    public CaffeineCache caffeineCache() {
         int maxCapacity = (int) (Runtime.getRuntime().totalMemory() * multilevelCacheProperties.getMaxCapacityRate());
         int initCapacity = (int) (maxCapacity * multilevelCacheProperties.getInitRate());
-        CaffeineCache caffeineCache = new CaffeineCache("multi", Caffeine.newBuilder()
+        CaffeineCache caffeineCache = new CaffeineCache(multilevelCacheProperties.getCaffeineName(), Caffeine.newBuilder()
                 // 设置初始缓存大小
                 .initialCapacity(initCapacity)
                 // 设置最大缓存
@@ -87,9 +87,27 @@ public class MultilevelCacheManager {
 
 
     @Bean
-    MultilevelCache multilevelCache(@Autowired RedisCache redisCache, @Autowired CaffeineCache caffeineCache) {
+    public MultilevelCache multilevelCache(@Autowired RedisCache redisCache, @Autowired CaffeineCache caffeineCache) {
         MultilevelCache multilevelCache = new MultilevelCache(true, redisCache, caffeineCache);
         return multilevelCache;
+    }
+
+    @Bean
+    public RedisCacheMessageListener redisCacheMessageListener(@Autowired CaffeineCache caffeineCache) {
+        RedisCacheMessageListener redisCacheMessageListener = new RedisCacheMessageListener();
+        redisCacheMessageListener.setCaffeineCache(caffeineCache);
+        return redisCacheMessageListener;
+    }
+
+
+
+    @Bean
+    public RedisMessageListenerContainer redisMessageListenerContainer(@Autowired RedisConnectionFactory redisConnectionFactory,
+                                                                       @Autowired RedisCacheMessageListener redisCacheMessageListener) {
+        RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
+        redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
+        redisMessageListenerContainer.addMessageListener(redisCacheMessageListener, new ChannelTopic(multilevelCacheProperties.getTopic()));
+        return redisMessageListenerContainer;
     }
 
 
