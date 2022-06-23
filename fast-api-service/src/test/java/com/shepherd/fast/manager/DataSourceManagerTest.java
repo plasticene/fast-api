@@ -39,13 +39,14 @@ public class DataSourceManagerTest {
         redisTemplate.opsForValue().set("data_source_4", ds);
     }
 
-    public void multilevel() {
+    @Test
+    public void testTopic() {
         DataSource ds = new DataSource();
         ds.setName("多级缓存");
         ds.setType(1);
         ds.setCreateTime(new Date());
         ds.setHost("127.0.0.1");
-        multilevelCache.put("multi-1", ds);
+        redisTemplate.convertAndSend("multilevel-redis-cache", ds);
     }
 
 
