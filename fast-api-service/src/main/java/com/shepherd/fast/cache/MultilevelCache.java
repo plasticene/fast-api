@@ -79,18 +79,30 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
 
     /**
      *  注意：redis缓存的对象object必须序列化 implements Serializable, 不然缓存对象不成功。
+     *  注意：这里asyncPublish()方法是异步发布消息，然后让分布式其他节点清除本地缓存,防止当前节点因更新覆盖数据而其他节点本地缓存保存是脏数据
+     *  所以下面顺序为先同步发布消息，存入redis缓存，最后再存入本地缓存，这样当前当前节点服务监听消息之后删除本地缓存动作是在我们存入本地缓存之前
+     *  这样本地缓存数据才能成功存入
      * @param key
      * @param value
      */
+    @SneakyThrows
     @Override
     public void put(@NonNull Object key, Object value) {
         Assert.notNull(key, "key不可为空");
-        caffeineCache.put(key, value);
-        asyncPublish(key, value);
+        syncPublish(key, value);
         redisCache.put(key, value);
+        // 睡眠100ms
+        TimeUnit.MILLISECONDS.sleep(100);
+        caffeineCache.put(key, value);
 
     }
 
+    /**
+     * key不存在时，再保存，存在返回当前值不覆盖
+     * @param key
+     * @param value
+     * @return
+     */
     @Override
     public ValueWrapper putIfAbsent(@NonNull Object key, Object value) {
         Assert.notNull(key, "key不可为空");
@@ -129,12 +141,12 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
         Assert.notNull(key, "key不可为空");
         ValueWrapper value = caffeineCache.get(key);
         if (Objects.nonNull(value)) {
-            log.info("查询caffeine 一级缓存 key:{}, 返回值是:{}", key, value);
+            log.info("查询caffeine 一级缓存 key:{}, 返回值是:{}", key, value.get());
             return value.get();
         }
         value = Optional.ofNullable(redisCache.get(key)).orElse(null);
         if (Objects.nonNull(value)) {
-            log.info("查询redis 二级缓存 key:{}, 返回值是:{}", key, value);
+            log.info("查询redis 二级缓存 key:{}, 返回值是:{}", key, value.get());
             // 异步将二级缓存redis写到一级缓存caffeine
             ValueWrapper finalValue = value;
             cacheExecutor.execute(()->{
@@ -157,6 +169,15 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
             cacheMessage.setValue(value);
             redisTemplate.convertAndSend(multilevelCacheProperties.getTopic(), cacheMessage);
         });
+    }
+
+    // 同步发送消息
+    void syncPublish(Object key, Object value) {
+        CacheMessage cacheMessage = new CacheMessage();
+        cacheMessage.setCacheName(multilevelCacheProperties.getName());
+        cacheMessage.setKey(key);
+        cacheMessage.setValue(value);
+        redisTemplate.convertAndSend(multilevelCacheProperties.getTopic(), cacheMessage);
     }
 
 
