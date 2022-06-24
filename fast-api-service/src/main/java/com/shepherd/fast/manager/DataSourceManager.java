@@ -4,6 +4,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.ImmutableMap;
+import com.shepherd.fast.cache.MultilevelCache;
 import com.shepherd.fast.dto.DataSourceDTO;
 import com.shepherd.fast.enums.DatabaseEnum;
 import com.shepherd.fast.exception.BizException;
@@ -12,6 +13,7 @@ import org.apache.commons.dbutils.DbUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -32,19 +34,10 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @Slf4j
 public class DataSourceManager {
 
+    @Resource
+    private MultilevelCache multilevelCache;
 
-    /**
-     * 5分钟过期
-     */
-    private Cache<String, DataSource> datasourceMap = Caffeine.newBuilder()
-            .removalListener((key, value, cause) -> {
-                // 过期移除datasource时需要显式关闭pool.
-                if (Objects.nonNull(value)) {
-                    ((DruidDataSource)value).close();
-                }
-            })
-            .expireAfterAccess(5, TimeUnit.MINUTES)
-            .build();
+
 
     public DataSource getDataSource(DataSourceDTO ds) throws SQLException {
         Integer type = ds.getType();
@@ -52,8 +45,10 @@ public class DataSourceManager {
         String driverClass = databaseEnum.getDriverClass();
         String jdbcUrl = String.format(databaseEnum.getUrl(), ds.getHost(), ds.getPort(), ds.getSelectDatabase());
         String key = jdbcUrl + ds.getUserName() + ds.getPassword();
-        if (datasourceMap.asMap().containsKey(key)) {
-            return datasourceMap.getIfPresent(key);
+        String md5Key = DigestUtils.md5DigestAsHex(key.getBytes());
+        DataSource dataSource = multilevelCache.get(md5Key, DataSource.class);
+        if (dataSource != null) {
+            return dataSource;
         }
         DruidDataSource druidDataSource = new DruidDataSource();
         druidDataSource.setName(ds.getName());
@@ -63,7 +58,7 @@ public class DataSourceManager {
         druidDataSource.setDriverClassName(driverClass);
         druidDataSource.setConnectionErrorRetryAttempts(3);       //失败后重连次数
         druidDataSource.setBreakAfterAcquireFailure(true);
-        datasourceMap.put(key, druidDataSource);
+        multilevelCache.put(key, druidDataSource);
         return druidDataSource;
     }
 
@@ -73,10 +68,8 @@ public class DataSourceManager {
         DatabaseEnum databaseEnum = DatabaseEnum.getType(type);
         String jdbcUrl = String.format(databaseEnum.getUrl(), ds.getHost(), ds.getPort(), ds.getSelectDatabase());
         String key = jdbcUrl + ds.getUserName() + ds.getPassword();
-        if (datasourceMap.asMap().containsKey(key)) {
-            datasourceMap.asMap().remove(key);
-        }
-
+        String md5Key = DigestUtils.md5DigestAsHex(key.getBytes());
+        multilevelCache.evict(md5Key);
     }
 
     /**
