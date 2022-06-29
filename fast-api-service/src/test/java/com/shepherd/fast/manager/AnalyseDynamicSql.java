@@ -1,6 +1,13 @@
 package com.shepherd.fast.manager;
 
 import cloud.agileframework.sql.SqlUtil;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.statement.SQLSelect;
+import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
+import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlSchemaStatVisitor;
+import com.alibaba.druid.sql.parser.SQLParserUtils;
+import com.alibaba.druid.sql.parser.SQLStatementParser;
+import com.alibaba.druid.util.JdbcUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.junit.Test;
@@ -37,6 +44,22 @@ public class AnalyseDynamicSql {
         String sql = SqlUtil.parserSQL("select {a},bColumn from your_table " +
                 "where c = {c} and d in {d} and e = {e} and f in {f} or g in {g}",param);
         System.out.println(sql);
+    }
+
+    @Test
+    public void test1() {
+        // 新建 MySQL Parser
+        String sql = "select a, bColumn from your_table where c = {ccc} and d in @ddd and e = @eee and f in @ffff or g in @ggg";
+        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, JdbcUtils.MYSQL);
+
+        // 使用Parser解析生成AST，这里SQLStatement就是AST
+        SQLSelectStatement statement =(SQLSelectStatement)parser.parseStatement();
+
+        // 使用visitor来访问AST
+        MySqlSchemaStatVisitor visitor = new MySqlSchemaStatVisitor();
+        statement.accept(visitor);
+
+        SQLSelect sqlSelect = statement.getSelect();
     }
 
 
