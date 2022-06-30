@@ -96,6 +96,7 @@ public class DynamicSqlParser {
             // 1.解析查询字段
             SQLSelectQueryBlock sqlSelectQueryBlock = ((SQLSelectQueryBlock) query);
             List<SQLSelectItem> selectList = sqlSelectQueryBlock.getSelectList();
+            parseSQLSelectItem(selectList);
 
             // 2.解析表，嵌套查询
             SQLTableSource from = sqlSelectQueryBlock.getFrom();
@@ -118,10 +119,24 @@ public class DynamicSqlParser {
     }
 
     /**
+     * 解析查询字段，如果查询字段列表有子查询，那么递归调用parseSQL
+     * @param selectList
+     */
+    private void parseSQLSelectItem(List<SQLSelectItem> selectList) {
+        selectList.forEach(sqlSelectItem -> {
+            SQLExpr sqlExpr = sqlSelectItem.getExpr();
+            if (sqlExpr instanceof SQLQueryExpr) {
+                String sql = SQLUtils.toSQLString(sqlExpr);
+                parseSQL(sql);
+            }
+        });
+    }
+
+    /**
      * 解析 from table表
      * @param from
      */
-    private  void parseTableSource(SQLTableSource from) {
+    private void parseTableSource(SQLTableSource from) {
         // 1.from子句是查询语句
         if (from instanceof SQLSubqueryTableSource) {
             SQLSelect childSelect = ((SQLSubqueryTableSource) from).getSelect();
