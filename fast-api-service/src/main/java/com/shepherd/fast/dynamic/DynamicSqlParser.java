@@ -159,7 +159,7 @@ public class DynamicSqlParser {
 
 
     /**
-     * 解析where添加语句， 这里的sqlObject一定是一个SQLExpr
+     * 解析where条件语句， 这里的sqlObject一定是一个SQLExpr
      * @param sqlObject
      */
     private  void parseWhere(SQLExpr sqlObject) {
@@ -204,7 +204,7 @@ public class DynamicSqlParser {
 
 
     /**
-     * sql分段，比如把where条件按照表达式拆分成段
+     * sql分段，把where条件按照表达式拆分成段
      * 方便对每一个where条件进行分析
      * @param sqlObject
      * @return
@@ -281,12 +281,17 @@ public class DynamicSqlParser {
 
 
     public static void main(String[] args) {
+        String sql = "SELECT * FROM (SELECT id, org_id, NAME, age, phone, email, ( SELECT dep_name FROM dept WHERE dep_id = @depId ) FROM USER t \n" +
+                "WHERE t.is_delete = 0 AND t.id IN ( SELECT id FROM USER WHERE org_id = @orgId ) AND create_TIME >= @createTime AND age = @age AND type IN @type AND state <> @state \n" +
+                "AND ( NAME = @NAME OR user_name = @NAME ) ) AS a \n" +
+                "WHERE a.org_id = @orgId AND id IN @id AND email LIKE '%@163.com' AND phone = @phone";
         Map<String, String> params = new HashMap<>();
-        params.put("@orgId", "1604");
-        params.put("@aaa", "'2022-06-30 16:05:00'");
-        params.put("@ddd", "'adc', 'sup', 'top'");
-        params.put("@fff", "6,7,8,9,10000");
-        String sql = "select a, b,c, (select id from user where dep_id=@depId) from table1 t where t.name='张三' and t.id in (select id from user where org_id=@orgId) and a>@aaa and c = @ccc and d in     @ddd and e <> @eee and (f in @fff or g in @ggg)";
+        params.put("@depId", "567");
+        params.put("@orgId", "432");
+        params.put("@createTime", "2022-06-30 19:00:00");
+        params.put("@type", "6,7,8,9,10000");
+        params.put("@name", "张三");
+        params.put("@phone", "1234567789");
         DynamicSqlParser dynamicSqlParser = new DynamicSqlParser();
         String beautySQL = dynamicSqlParser.parseSQL(sql, params);
         System.out.println(beautySQL);
@@ -297,31 +302,31 @@ public class DynamicSqlParser {
 //        params.put("@states", "6,7,8,9,10000");
 //        params.put("@idCard", "'34476657345'");
 //
-//        String sql = " select * from (select ca.id,ca.id_card,ca.create_time,ca.update_time,ca.create_by,ca.update_by,ca.out_serial_no,\n" +
-//                "        ca.serial_no,ca.name,ca.oper_status,ca.overdue_date,\n" +
-//                "        ca.overdue_days,ca.entrust_start_time,ca.entrust_end_time,\n" +
-//                "        ca.amount,ca.`desc`,ca.status,ca.field_json,ca.call_status,ca.state,ca.repair_status,ca.recovery,\n" +
-//                "        ca.operation_state,ca.last_follow_time,ca.follow_count,ca.sync_status,ca.operation_next_time,\n" +
-//                "        ca.out_serial_temp,ca.pay_amount,ca.return_time,ca.own_mobile,ca.division_time,ca.color,ca.ignore_plan,\n" +
-//                "        ca.cooperation_status,\n" +
-//                "\t\t\t\tdeb.last_follow_time debt_last_follow_time,\n" +
-//                "        deb.follow_count debt_follow_count,deb.type as conjoint_type,\n" +
-//                "\t\t\t\t ca.product_id,ca.org_delt_id,ca.user_id,ca.dep_id,ca.team_id,ca.store_id,ca.org_id,\n" +
-//                "        ca.out_batch_id,ca.inner_batch_id,debt_id,\n" +
-//                "\t\t\t\tur.name as userName,ur.status as userStatus,\n" +
-//                "\t\t\t\tp.type product_type,ca.vsearch_key1,ca.vsearch_key2\n" +
-//                "        ,ca.auto_assist_result,\n" +
-//                "        ca.auto_assist_date, ca.tag, ca.auto_assist_record,ca.call_type,ca.case_tag_id\n" +
-//                "\t\t\t\tfrom `case_info` as ca  \n" +
-//                "\t\t\t\tinner join `product` p on p.id=ca.product_id and p.org_id=@orgId\n" +
-//                "        left join `user` as ur on ur.id=ca.user_id and ur.status=0\n" +
-//                "        left join `case_debtor` deb on deb.id=ca.debt_id and deb.status=0\n" +
-//                "\t\t\t\twhere ca.recovery = 0 and ca.org_id=@orgId and ca.state not in @states\n" +
-//                "\t\t\t\tand (ca.dep_id in(select id from org_dep_team dept where dept.is_agent=@isAgent)\n" +
-//                "                or ca.team_id in(select id from org_dep_team dept where dept.is_agent=0 and dept.under_team=1))\n" +
-//                "\t\t\t\torder by  ca.id desc\n" +
-//                "\t\t\t\tlimit 60,20) as a where is_agent=0 and create_time >= @createTime and name = @name and id_card=@idCard\n" +
-//                "\t\t\t\t\t\t";
+//        String sql = " select * from (select ca.id,ca.id_card,ca.create_time,ca.update_time,ca.create_by,ca.update_by,ca.out_serial_no," +
+//                "        ca.serial_no,ca.name,ca.oper_status,ca.overdue_date," +
+//                "        ca.overdue_days,ca.entrust_start_time,ca.entrust_end_time," +
+//                "        ca.amount,ca.`desc`,ca.status,ca.field_json,ca.call_status,ca.state,ca.repair_status,ca.recovery," +
+//                "        ca.operation_state,ca.last_follow_time,ca.follow_count,ca.sync_status,ca.operation_next_time," +
+//                "        ca.out_serial_temp,ca.pay_amount,ca.return_time,ca.own_mobile,ca.division_time,ca.color,ca.ignore_plan," +
+//                "        ca.cooperation_status," +
+//                "deb.last_follow_time debt_last_follow_time," +
+//                "        deb.follow_count debt_follow_count,deb.type as conjoint_type," +
+//                " ca.product_id,ca.org_delt_id,ca.user_id,ca.dep_id,ca.team_id,ca.store_id,ca.org_id," +
+//                "        ca.out_batch_id,ca.inner_batch_id,debt_id," +
+//                "ur.name as userName,ur.status as userStatus," +
+//                "p.type product_type,ca.vsearch_key1,ca.vsearch_key2" +
+//                "        ,ca.auto_assist_result," +
+//                "        ca.auto_assist_date, ca.tag, ca.auto_assist_record,ca.call_type,ca.case_tag_id" +
+//                "from `case_info` as ca  " +
+//                "inner join `product` p on p.id=ca.product_id and p.org_id=@orgId" +
+//                "        left join `user` as ur on ur.id=ca.user_id and ur.status=0" +
+//                "        left join `case_debtor` deb on deb.id=ca.debt_id and deb.status=0" +
+//                "where ca.recovery = 0 and ca.org_id=@orgId and ca.state not in @states" +
+//                "and (ca.dep_id in(select id from org_dep_team dept where dept.is_agent=@isAgent)" +
+//                "                or ca.team_id in(select id from org_dep_team dept where dept.is_agent=0 and dept.under_team=1))" +
+//                "order by  ca.id desc" +
+//                "limit 60,20) as a where is_agent=0 and create_time >= @createTime and name = @name and id_card=@idCard" +
+//                "";
 //        DynamicSqlParser dynamicSqlParser = new DynamicSqlParser();
 //        String beautySQL = dynamicSqlParser.parseSQL(sql, params);
 //        System.out.println(beautySQL);
