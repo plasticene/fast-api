@@ -12,6 +12,7 @@ import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.alibaba.druid.util.JdbcUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,9 +24,9 @@ import java.util.Map;
  * @version 1.0
  * @date 2022/6/29 11:28
  */
+@Component
 public class DynamicSqlParser {
 
-    public static final String CONSTANT_CONDITION_REGEX = "((OR|AND|LIKE)[\\s]+1[\\s]*=[\\s]*1)|(1[\\s]*=[\\s]*1[\\s]+(OR|AND|LIKE))|(^1[\\s]*=[\\s]*1)";
     /**
      * 常量表达式
      */
@@ -33,7 +34,7 @@ public class DynamicSqlParser {
 
     public static final ThreadLocal<Map<String, String>> paramToWhere = new ThreadLocal<>();
 
-    public static String parseSQL(String sql) {
+    public String parseSQL(String sql) {
         // 新建 MySQL Parser
         SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, JdbcUtils.MYSQL);
 
@@ -47,12 +48,12 @@ public class DynamicSqlParser {
         return null;
     }
 
-    private static void parserSelect(SQLSelectStatement statement) {
+    private  void parserSelect(SQLSelectStatement statement) {
         SQLSelect sqlSelect = statement.getSelect();
         parserSQLSelect(sqlSelect);
     }
 
-    private static void parserSQLSelect(SQLSelect sqlSelect) {
+    private  void parserSQLSelect(SQLSelect sqlSelect) {
         parserQuery(sqlSelect.getQuery());
     }
 
@@ -60,8 +61,7 @@ public class DynamicSqlParser {
      * 真正解析动态sql语句的核心方法
      * @param query
      */
-    private static void parserQuery(SQLSelectQuery query) {
-
+    private  void parserQuery(SQLSelectQuery query) {
         if (query instanceof SQLSelectQueryBlock) {
             // 1.解析查询字段
             SQLSelectQueryBlock sqlSelectQueryBlock = ((SQLSelectQueryBlock) query);
@@ -91,7 +91,7 @@ public class DynamicSqlParser {
      * 解析 from 表
      * @param from
      */
-    private static void parsingTableSource(SQLTableSource from) {
+    private  void parsingTableSource(SQLTableSource from) {
         // 1.from子句是查询语句
         if (from instanceof SQLSubqueryTableSource) {
             SQLSelect childSelect = ((SQLSubqueryTableSource) from).getSelect();
@@ -106,39 +106,20 @@ public class DynamicSqlParser {
             SQLExpr condition = ((SQLJoinTableSource) from).getCondition();
             if (condition != null) {
                 parserSQLObject(condition);
-                SQLExpr newCondition = parsingWhereConstant(condition);
-                ((SQLJoinTableSource) from).setCondition(newCondition);
             }
         } else if (from instanceof SQLUnionQueryTableSource) {
             parserQuery(((SQLUnionQueryTableSource) from).getUnion());
         }
     }
 
-    private static <T extends SQLExpr> void parsingWhere(T where) {
+    private  <T extends SQLExpr> void parsingWhere(T where) {
         if (where == null) {
             return;
         }
         parserSQLObject(where);
-
-//        SQLObject parent = where.getParent();
-
-//        SQLExpr newWhere;
-//        if (parent instanceof SQLSelectQueryBlock) {
-//            newWhere = ((SQLSelectQueryBlock) parent).getWhere();
-//            SQLExpr newParseWhere = parsingWhereConstant(newWhere);
-//            ((SQLSelectQueryBlock) parent).setWhere(newParseWhere);
-//        } else if (parent instanceof SQLUpdateStatement) {
-//            newWhere = ((SQLUpdateStatement) parent).getWhere();
-//            SQLExpr newParseWhere = parsingWhereConstant(newWhere);
-//            ((SQLUpdateStatement) parent).setWhere(newParseWhere);
-//        } else {
-//            newWhere = ((SQLDeleteStatement) parent).getWhere();
-//            SQLExpr newParseWhere = parsingWhereConstant(newWhere);
-//            ((SQLDeleteStatement) parent).setWhere(newParseWhere);
-//        }
     }
 
-    public static void parserSQLObject(SQLExpr sqlObject) {
+    private  void parserSQLObject(SQLExpr sqlObject) {
         if (sqlObject == null) {
             return;
         }
@@ -148,10 +129,11 @@ public class DynamicSqlParser {
         }
     }
 
-    private static void parsingPart(SQLObject part) {
+    private void parsingPart(SQLObject part) {
         if (part instanceof SQLInListExpr) {
+            handleSQLInListExpr((SQLInListExpr) part);
         } else if (part instanceof SQLBinaryOpExpr) {
-        } else if (part instanceof SQLSelectQueryBlock) {
+            handleSQLBinaryOpExpr((SQLBinaryOpExpr) part);
         }  else if (part instanceof SQLSelectStatement) {
             parserSelect((SQLSelectStatement) part);
         } else if (part instanceof SQLInSubQueryExpr) {
@@ -165,7 +147,7 @@ public class DynamicSqlParser {
         }
     }
 
-    private static void parsingInSubQuery(SQLInSubQueryExpr c) {
+    private void parsingInSubQuery(SQLInSubQueryExpr c) {
         SQLSelect sqlSelect = c.getSubQuery();
         SQLStatementParser sqlStatementParser = SQLParserUtils.createSQLStatementParser(parseSQL(sqlSelect.toString()), JdbcUtils.MYSQL);
         sqlSelect.setQuery(((SQLSelectStatement) sqlStatementParser.parseStatement()).getSelect().getQueryBlock());
@@ -176,7 +158,7 @@ public class DynamicSqlParser {
      * @param sqlObject
      * @return
      */
-    private static List<SQLObject> getMuchPart(SQLObject sqlObject) {
+    private  List<SQLObject> getMuchPart(SQLObject sqlObject) {
         List<SQLObject> result = new LinkedList<>();
 
         if (sqlObject == null) {
@@ -201,28 +183,22 @@ public class DynamicSqlParser {
         return result;
     }
 
-    public static SQLExpr parsingWhereConstant(SQLExpr sqlExpr) {
-        String where = SQLUtils.toMySqlString(sqlExpr);
-        where = where.replaceAll(CONSTANT_CONDITION_REGEX, "").trim();
-        final int minSize = 3;
-        if (where.trim().length() < minSize || CONSTANT_CONDITION.equals(where)) {
-            return null;
-        }
-        sqlExpr = SQLUtils.toMySqlExpr(where);
-        if (where.contains(CONSTANT_CONDITION)) {
-            return parsingWhereConstant(sqlExpr);
-        } else {
-            return sqlExpr;
-        }
-    }
 
-    private static void handleSQLInListExpr(SQLInListExpr sqlInListExpr) {
-
+    private void handleSQLInListExpr(SQLInListExpr sqlInListExpr) {
+        List<SQLExpr> targetList = sqlInListExpr.getTargetList();
+        SQLExpr sqlExpr = targetList.get(0);
+        if (sqlExpr instanceof SQLVariantRefExpr) {
+            String param = SQLUtils.toSQLString(sqlExpr);
+            if (param.startsWith("@")) {
+                String where = SQLUtils.toSQLString(sqlInListExpr);
+                setParamToWhere(param, where);
+            }
+        }
 
     }
 
 
-    private static void handleSQLBinaryOpExpr(SQLBinaryOpExpr sqlBinaryOpExpr) {
+    private void handleSQLBinaryOpExpr(SQLBinaryOpExpr sqlBinaryOpExpr) {
         SQLExpr right = sqlBinaryOpExpr.getRight();
         if (right instanceof SQLVariantRefExpr) {
             String param = SQLUtils.toSQLString(right);
@@ -233,7 +209,7 @@ public class DynamicSqlParser {
         }
     }
 
-    private static void setParamToWhere(String param, String where) {
+    private void setParamToWhere(String param, String where) {
         Map<String, String> map = paramToWhere.get();
         if (map == null) {
             map = new HashMap<>();
@@ -243,9 +219,9 @@ public class DynamicSqlParser {
 
 
     public static void main(String[] args) {
-
         String sql = "select a, bColumn from table1 t where t.name='张三' and id in (select id from user where org_id=100) and a>@aaa and c = @ccc and d in     @ddd and e <> @eee and f in @ffff or g in @ggg";
-        DynamicSqlParser.parseSQL(sql);
+        DynamicSqlParser dynamicSqlParser = new DynamicSqlParser();
+        dynamicSqlParser.parseSQL(sql);
     }
 
 
