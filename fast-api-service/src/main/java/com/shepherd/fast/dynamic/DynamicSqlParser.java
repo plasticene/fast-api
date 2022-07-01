@@ -31,6 +31,11 @@ public class DynamicSqlParser {
      */
     public static final String CONSTANT_CONDITION = "1 = 1";
 
+    /**
+     * 存放解析出来的带@var动态参数的条件语句   动态参数 → 条件set集合
+     * 在sql语句一个动态参数`@var`有可能用在了不同地方，如@orgId参数用在了org_id = @orgId 和 o.id = @orgId这两个where条件中，
+     * 所以要对应一个set
+     */
     public static final ThreadLocal<Map<String, Set<String>>> varToWhere = new ThreadLocal<>();
 
     public String parseSQL(String sql, Map<String, String> params) {
@@ -282,8 +287,8 @@ public class DynamicSqlParser {
 
     public static void main(String[] args) {
         String sql = "SELECT * FROM (SELECT id, org_id, NAME, age, phone, email, ( SELECT dep_name FROM dept WHERE dep_id = @depId ) FROM USER t \n" +
-                "WHERE t.is_delete = 0 AND t.id IN ( SELECT id FROM USER WHERE org_id = @orgId ) AND create_TIME >= @createTime AND age = @age AND type IN @type AND state <> @state \n" +
-                "AND ( NAME = @NAME OR user_name = @NAME ) ) AS a \n" +
+                "WHERE t.is_delete = 0 AND t.id IN ( SELECT id FROM USER WHERE org_id = @orgId ) AND create_time >= @createTime AND age = @age AND type IN @type AND state <> @state \n" +
+                "AND ( name = @name OR user_name = @name ) ) AS a \n" +
                 "WHERE a.org_id = @orgId AND id IN @id AND email LIKE '%@163.com' AND phone = @phone";
         Map<String, String> params = new HashMap<>();
         params.put("@depId", "567");
@@ -291,7 +296,7 @@ public class DynamicSqlParser {
         params.put("@createTime", "2022-06-30 19:00:00");
         params.put("@type", "6,7,8,9,10000");
         params.put("@name", "张三");
-        params.put("@phone", "1234567789");
+        params.put("@phone", "'1234567789'");
         DynamicSqlParser dynamicSqlParser = new DynamicSqlParser();
         String beautySQL = dynamicSqlParser.parseSQL(sql, params);
         System.out.println(beautySQL);
