@@ -1,9 +1,14 @@
 package com.shepherd.fast.controller;
 
 import com.shepherd.fast.anno.ResponseResultBody;
+import com.shepherd.fast.param.FolderParam;
+import com.shepherd.fast.service.FolderService;
 import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * @author fjzheng
@@ -15,4 +20,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/folder")
 @Api(tags = "分组管理")
 public class FolderController {
+    @Resource
+    private FolderService folderService;
+
+    @ApiOperation("添加分组")
+    @PostMapping
+    public void addFolder(@RequestBody @Validated FolderParam folderParam) {
+        folderService.addFolder(folderParam);
+    }
+
+    @ApiOperation("修改分组")
+    @PutMapping("/{folderId}")
+    public void updateFolder(@RequestBody FolderParam folderParam, @PathVariable("folderId") Long folderId) {
+        folderService.updateFolder(folderId, folderParam);
+    }
+
 }
