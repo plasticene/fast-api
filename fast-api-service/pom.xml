@@ -102,23 +102,23 @@
             <artifactId>caffeine</artifactId>
         </dependency>
 
-        <!--声明依赖-->
-        <dependency>
-            <groupId>cloud.agileframework</groupId>
-            <artifactId>agile-sql</artifactId>
-            <version>2.0.5</version>
-        </dependency>
+<!--        &lt;!&ndash;声明依赖&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>cloud.agileframework</groupId>-->
+<!--            <artifactId>agile-sql</artifactId>-->
+<!--            <version>2.0.5</version>-->
+<!--        </dependency>-->
 
 
     </dependencies>
 
-    <!--声明中央仓库-->
-    <repositories>
-        <repository>
-            <id>cent</id>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-    </repositories>
+<!--    &lt;!&ndash;声明中央仓库&ndash;&gt;-->
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>cent</id>-->
+<!--            <url>https://repo1.maven.org/maven2/</url>-->
+<!--        </repository>-->
+<!--    </repositories>-->
 
     <build>
         <plugins>
