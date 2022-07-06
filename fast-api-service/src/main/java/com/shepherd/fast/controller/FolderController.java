@@ -1,7 +1,11 @@
 package com.shepherd.fast.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.shepherd.fast.anno.ResponseResultBody;
+import com.shepherd.fast.dto.FolderDTO;
 import com.shepherd.fast.param.FolderParam;
+import com.shepherd.fast.query.BaseQuery;
+import com.shepherd.fast.query.FolderQuery;
 import com.shepherd.fast.service.FolderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,5 +38,13 @@ public class FolderController {
     public void updateFolder(@RequestBody FolderParam folderParam, @PathVariable("folderId") Long folderId) {
         folderService.updateFolder(folderId, folderParam);
     }
+
+    @ApiOperation("分组列表")
+    @GetMapping
+    public IPage<FolderDTO> getList(FolderQuery query) {
+        return folderService.getList(query);
+    }
+
+
 
 }

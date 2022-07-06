@@ -1,6 +1,11 @@
 package com.shepherd.fast.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.shepherd.fast.dto.FolderDTO;
 import com.shepherd.fast.param.FolderParam;
+import com.shepherd.fast.query.FolderQuery;
+
+import java.util.List;
 
 /**
  * @author fjzheng
@@ -12,4 +17,7 @@ public interface FolderService {
     void addFolder(FolderParam folderParam);
 
     void updateFolder(Long folderId, FolderParam folderParam);
+
+    IPage<FolderDTO> getList(FolderQuery folderQuery);
+
 }
