@@ -26,6 +26,11 @@ public enum DatabaseSqlEnum {
             " AS tableName FROM system.tables WHERE database = '%s'"
     ),
 
+    DORIS_TABLE(2,"Doris", SqlTypeConstant.DATABASE_TABLE, "select case when LENGTH(table_comment)>0 then " +
+            " table_comment else table_name  end tableComment, table_name as 'tableName' from information_schema.TABLES " +
+            " where TABLE_SCHEMA = '%s'"
+    ),
+
     MYSQL_TABLE_COLUMN(0, "MySQL", SqlTypeConstant.TABLE_STRUCT, "select column_name, data_type, column_type," +
             " column_comment from information_schema.COLUMNS where table_schema='%s' and table_name='%s'"
     ),
@@ -35,16 +40,26 @@ public enum DatabaseSqlEnum {
             " AS columnType, comment from system.columns where database='%s' and table='%s'"
     ),
 
+    DORIS_TABLE_COLUMN(2, "Doris", SqlTypeConstant.TABLE_STRUCT, "select column_name, data_type, column_type," +
+            " column_comment from information_schema.COLUMNS where table_schema='%s' and table_name='%s'"
+    ),
+
     MYSQL_TABLE_DATA(0, "MySQL", SqlTypeConstant.TABLE_DATA, "select * from %s limit %s"
     ),
 
     CLICKHOUSE_TABLE_DATA(1, "ClickHouse", SqlTypeConstant.TABLE_DATA, "select * from %s limit %s"
     ),
 
+    DORIS_TABLE_DATA(2, "Doris", SqlTypeConstant.TABLE_DATA, "select * from %s limit %s"
+    ),
+
     MYSQL_TABLE_COUNT(0, "MySQL", SqlTypeConstant.TABLE_COUNT, "select count(*) AS total from %s"
     ),
 
     CLICKHOUSE_TABLE_COUNT(1, "ClickHouse", SqlTypeConstant.TABLE_COUNT, "select count(*) AS total from %s"
+    ),
+
+    DORIS_TABLE_COUNT(2, "Doris", SqlTypeConstant.TABLE_COUNT, "select count(*) AS total from %s"
     );
 
 

@@ -17,12 +17,19 @@ public enum DatabaseEnum {
              "jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&useSSL=false",
              "SELECT SCHEMA_NAME FROM information_schema.SCHEMATA"),
 
+
     CLICKHOUSE(1, "CLICKHOUSE", "ru.yandex.clickhouse.ClickHouseDriver",
             "jdbc:clickhouse://%s:%s?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&useSSL=false",
              "jdbc:clickhouse://%s:%s/%s?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&useSSL=false",
              "select name from `system`.databases"),
 
-    ORACLE(2, "ORACLE", "oracle.jdbc.driver.OracleDriver",
+    DORIS(2, "DORIS", "com.mysql.jdbc.Driver",
+            "jdbc:mysql://%s:%s?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&useSSL=false",
+            "jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&useSSL=false",
+            "SELECT SCHEMA_NAME FROM information_schema.SCHEMATA"),
+
+
+    ORACLE(3, "ORACLE", "oracle.jdbc.driver.OracleDriver",
             "jdbc:oracle:thin:@%s:%s",
             "jdbc:oracle:thin:@//%s:%s/%s",
             "SELECT SCHEMA_NAME FROM information_schema.SCHEMATA");
