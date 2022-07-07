@@ -103,7 +103,7 @@ public class DataQueryServiceImpl implements DataQueryService {
         Integer total = getCount(ds, countSql);
         DataResultVO dataResultVO = queryResult(ds, sql);
         dataResultVO.setTotal(total);
-        int pages = total / pageSize + ((total % pageNo) == 0 ? 0 : 1);
+        int pages = total / pageSize + ((total % pageSize) == 0 ? 0 : 1);
         dataResultVO.setPages(pages);
         dataResultVO.setCurrent(pageNo);
         dataResultVO.setSize(pageSize);
