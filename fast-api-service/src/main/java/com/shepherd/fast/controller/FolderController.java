@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author fjzheng
@@ -43,6 +44,12 @@ public class FolderController {
     @GetMapping
     public IPage<FolderDTO> getList(FolderQuery query) {
         return folderService.getList(query);
+    }
+
+    @DeleteMapping
+    @ApiOperation("删除分组(批量)")
+    public void delFolder(@RequestBody List<Long> folderIds) {
+
     }
 
 
