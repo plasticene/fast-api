@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author fjzheng
@@ -30,7 +31,7 @@ public class DataSourceDTO {
     @ApiModelProperty("密码")
     private String password;
     @ApiModelProperty("数据库列表")
-    private List<String> databaseList;
+    private Set<String> databaseList;
     @ApiModelProperty("类型  0：MySQL 1：clickhouse  2：doris")
     private Integer type;
     @ApiModelProperty("创建时间")

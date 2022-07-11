@@ -90,7 +90,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Transactional(rollbackFor = Exception.class)
     public void addDataSource(DataSourceParam dataSourceParam) {
         DataSource dataSource = FdsBeanUtils.copy(dataSourceParam, DataSource.class);
-        dataSource.setDatabaseName(JSON.toJSONString(dataSourceParam.getDatabaseList()));
+//        dataSource.setDatabaseName(JSON.toJSONString(dataSourceParam.getDatabaseList()));
         dataSource.setCreateTime(new Date());
         dataSource.setUpdateTime(new Date());
         dataSourceDAO.insert(dataSource);
@@ -100,9 +100,9 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Transactional(rollbackFor = Exception.class)
     public void updateDataSource(Long dataSourceId, DataSourceParam dataSourceParam) {
         DataSource dataSource = FdsBeanUtils.copy(dataSourceParam, DataSource.class);
-        if (!CollectionUtils.isEmpty(dataSourceParam.getDatabaseList())) {
-            dataSource.setDatabaseName(JSON.toJSONString(dataSourceParam.getDatabaseList()));
-        }
+//        if (!CollectionUtils.isEmpty(dataSourceParam.getDatabaseList())) {
+//            dataSource.setDatabaseName(JSON.toJSONString(dataSourceParam.getDatabaseList()));
+//        }
         dataSource.setId(dataSourceId);
         dataSource.setUpdateTime(new Date());
         dataSourceDAO.updateById(dataSource);
@@ -182,7 +182,7 @@ public class DataSourceServiceImpl implements DataSourceService {
         }
         dataSources.forEach(dataSource -> {
             DataSourceDTO dataSourceDTO = FdsBeanUtils.copy(dataSource, DataSourceDTO.class);
-            dataSourceDTO.setDatabaseList(JSONObject.parseArray(dataSource.getDatabaseName(), String.class));
+//            dataSourceDTO.setDatabaseList(JSONObject.parseArray(dataSource.getDatabaseName(), String.class));
             dataSourceDTOList.add(dataSourceDTO);
         });
         return dataSourceDTOList;
@@ -193,7 +193,7 @@ public class DataSourceServiceImpl implements DataSourceService {
             return null;
         }
         DataSourceDTO dataSourceDTO = FdsBeanUtils.copy(dataSource, DataSourceDTO.class);
-        dataSourceDTO.setDatabaseList(JSONObject.parseArray(dataSource.getDatabaseName(), String.class));
+//        dataSourceDTO.setDatabaseList(JSONObject.parseArray(dataSource.getDatabaseName(), String.class));
         return dataSourceDTO;
 
     }

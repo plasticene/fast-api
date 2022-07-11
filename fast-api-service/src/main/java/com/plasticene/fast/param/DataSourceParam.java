@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author fjzheng
@@ -34,7 +35,7 @@ public class DataSourceParam {
     private String password;
     @ApiModelProperty("数据库列表")
     @NotNull(message = "数据库不能为空")
-    private List<String> databaseList;
+    private Set<String> databaseList;
     @ApiModelProperty("类型  0：MySQL 1：clickhouse  2：doris")
     @NotNull(message = "类型不能为空")
     private Integer type;
