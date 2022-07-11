@@ -38,6 +38,6 @@ public class BaseDO {
     /**
      * 是否删除
      */
-//    @TableLogic
-//    private Boolean deleted;
+    @TableLogic
+    private Integer deleted;
 }

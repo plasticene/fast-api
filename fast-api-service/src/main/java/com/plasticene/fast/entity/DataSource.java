@@ -30,5 +30,4 @@ public class DataSource extends BaseDO implements Serializable {
     private String userName;
     private String password;
     private Integer type;
-    private Integer isDelete;
 }

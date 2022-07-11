@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Date;
  * @date 2022/6/24 18:22
  */
 @Data
-public class ApiInfo {
+public class ApiInfo extends BaseDO implements Serializable {
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -24,7 +25,6 @@ public class ApiInfo {
     private String sql;
     private String param;
     private String response;
-    private Integer isDelete;
     private Date releaseTime;
     private Date createTime;
     private Date updateTime;

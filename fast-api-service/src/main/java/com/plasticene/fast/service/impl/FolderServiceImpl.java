@@ -48,7 +48,6 @@ public class FolderServiceImpl extends ServiceImpl<FolderDAO, Folder> implements
     @Override
     public IPage<FolderDTO> getList(FolderQuery query) {
         LambdaQueryWrapper<Folder> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Folder::getIsDelete, CommonConstant.IS_NOT_DEL);
         if (StringUtils.isNotBlank(query.getName())) {
             queryWrapper.likeRight(Folder::getName, query.getName());
         }
