@@ -1,7 +1,7 @@
 package com.plasticene.fast.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.plasticene.fast.anno.ResponseResultBody;
+import com.plasticene.boot.web.core.anno.ResponseResultBody;
 import com.plasticene.fast.dto.FolderDTO;
 import com.plasticene.fast.param.FolderParam;
 import com.plasticene.fast.query.FolderQuery;

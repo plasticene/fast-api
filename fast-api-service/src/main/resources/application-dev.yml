@@ -47,3 +47,16 @@ multilevel:
     topic: multilevel-cache-topic
     redisName: multilevel-redis-cache
     caffeineName: multilevel-caffeine-cache
+
+swagger-info:
+  title: fast-api
+  description: 快速生成接口
+  version: 1.0.0
+  base-package: com.plasticene.fast.controller
+  url: http://www.shepherd126.top/
+  author: shepherd
+  email: shepherd_zfj163.com
+
+ptc:
+  trace:
+    enable: true

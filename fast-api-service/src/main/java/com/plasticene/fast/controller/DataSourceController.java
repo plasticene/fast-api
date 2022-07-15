@@ -1,8 +1,8 @@
 package com.plasticene.fast.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.plasticene.boot.web.core.anno.ResponseResultBody;
 import com.plasticene.fast.dto.Column;
-import com.plasticene.fast.anno.ResponseResultBody;
 import com.plasticene.fast.dto.DataSourceDTO;
 import com.plasticene.fast.dto.TableInfo;
 import com.plasticene.fast.param.DataSourceParam;

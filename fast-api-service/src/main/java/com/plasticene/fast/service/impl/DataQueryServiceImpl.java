@@ -1,9 +1,9 @@
 package com.plasticene.fast.service.impl;
 
+import com.plasticene.boot.common.exception.BizException;
 import com.plasticene.fast.constant.SqlTypeConstant;
 import com.plasticene.fast.dto.Column;
 import com.plasticene.fast.dto.TableInfo;
-import com.plasticene.fast.exception.BizException;
 import com.plasticene.fast.manager.DataSourceManager;
 import com.plasticene.fast.query.BaseQuery;
 import com.plasticene.fast.service.DataQueryService;
