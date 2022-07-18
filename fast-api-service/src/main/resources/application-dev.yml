@@ -60,3 +60,5 @@ swagger-info:
 ptc:
   trace:
     enable: true
+  apiLog:
+    enable: true
