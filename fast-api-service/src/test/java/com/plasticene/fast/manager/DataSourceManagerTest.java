@@ -1,6 +1,5 @@
 package com.plasticene.fast.manager;
 
-import com.plasticene.fast.cache.MultilevelCache;
 import com.plasticene.fast.entity.DataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,8 +22,6 @@ public class DataSourceManagerTest {
 
     @Resource
     private RedisTemplate redisTemplate;
-    @Resource
-    private MultilevelCache multilevelCache;
 
 
     @Test
