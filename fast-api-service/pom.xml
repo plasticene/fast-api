@@ -33,6 +33,16 @@
         </dependency>
 
         <dependency>
+            <groupId>com.plasticene.boot</groupId>
+            <artifactId>plasticene-boot-starter-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.plasticene.boot</groupId>
+            <artifactId>plasticene-boot-starter-cache</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
         </dependency>
@@ -48,10 +58,6 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
