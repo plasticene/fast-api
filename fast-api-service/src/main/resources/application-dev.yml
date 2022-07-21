@@ -40,13 +40,19 @@ mybatis-plus:
 
 multilevel:
   cache:
-    accessExpireTime: 180
-    maxCapacityRate: 0.2
-    initRate: 0.5
+#    maxCapacityRate: 0.2
+#    initRate: 0.5
     name: multilevel-cache
     topic: multilevel-cache-topic
-    redisName: multilevel-redis-cache
-    caffeineName: multilevel-caffeine-cache
+#    redisName: multilevel-redis-cache
+#    caffeineName: multilevel-caffeine-cache
+    caffeine-expire-time: 180
+    redis-expire-time: 300
+    max-capacity-rate: 0.3
+    init-rate: 0.6
+    redis-name: multilevel-redis-cache
+    caffeine-name: multilevel-caffeine-cache
+    caffeine-switch: false
 
 swagger-info:
   title: fast-api
