@@ -4,6 +4,7 @@ import com.plasticene.boot.cache.core.manager.MultilevelCache;
 import com.plasticene.boot.redis.core.anno.DistributedLock;
 import com.plasticene.boot.redis.core.anno.RateLimit;
 import com.plasticene.boot.redis.core.enums.LimitType;
+import com.plasticene.fast.constant.CommonConstant;
 import com.plasticene.fast.entity.DataSource;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -93,12 +94,13 @@ public class TestController {
         return dataSource;
     }
 
-    @DistributedLock(key = "distributed-lock", leaseTime = 50)
+    @RateLimit( period = 10, count = CommonConstant.RATE)
+    @DistributedLock(key = "distributed-lock")
     @GetMapping("/lock")
     public void lock() {
         log.info("加锁成功，执行业务..." + Thread.currentThread().getId());
         try {
-            TimeUnit.SECONDS.sleep(100);
+            TimeUnit.SECONDS.sleep(60);
             log.info("执行结束：" + Thread.currentThread().getId());
         } catch (InterruptedException e) {
             e.printStackTrace();
