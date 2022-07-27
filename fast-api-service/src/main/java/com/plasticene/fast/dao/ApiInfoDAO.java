@@ -1,6 +1,7 @@
 package com.plasticene.fast.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.plasticene.boot.mybatis.core.mapper.BaseMapperX;
 import com.plasticene.fast.entity.ApiInfo;
 
 /**
@@ -8,5 +9,5 @@ import com.plasticene.fast.entity.ApiInfo;
  * @version 1.0
  * @date 2022/6/27 10:23
  */
-public interface ApiInfoDAO extends BaseMapper<ApiInfo> {
+public interface ApiInfoDAO extends BaseMapperX<ApiInfo> {
 }
