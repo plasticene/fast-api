@@ -1,6 +1,7 @@
 package com.plasticene.fast.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.plasticene.boot.common.pojo.PageResult;
 import com.plasticene.fast.dto.Column;
 import com.plasticene.fast.dto.DataSourceDTO;
 import com.plasticene.fast.dto.TableInfo;
@@ -26,7 +27,7 @@ public interface DataSourceService {
 
     void batchDelDataSource(List<Long> dataSourceIds);
 
-    IPage<DataSourceDTO> getList(DataSourceQuery query);
+    PageResult<DataSourceDTO> getList(DataSourceQuery query);
 
     List<TableInfo> getTableInfo(Long dataSourceId, String databaseName);
 

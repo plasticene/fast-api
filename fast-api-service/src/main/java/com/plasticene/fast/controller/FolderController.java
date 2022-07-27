@@ -1,6 +1,7 @@
 package com.plasticene.fast.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.plasticene.boot.common.pojo.PageResult;
 import com.plasticene.boot.web.core.anno.ResponseResultBody;
 import com.plasticene.fast.dto.FolderDTO;
 import com.plasticene.fast.param.FolderParam;
@@ -41,7 +42,7 @@ public class FolderController {
 
     @ApiOperation("分组列表")
     @GetMapping
-    public IPage<FolderDTO> getList(FolderQuery query) {
+    public PageResult<FolderDTO> getList(FolderQuery query) {
         return folderService.getList(query);
     }
 

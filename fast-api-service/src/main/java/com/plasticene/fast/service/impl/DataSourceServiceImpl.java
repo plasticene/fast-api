@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.plasticene.boot.common.exception.BizException;
+import com.plasticene.boot.common.pojo.PageParam;
+import com.plasticene.boot.common.pojo.PageResult;
 import com.plasticene.fast.constant.CommonConstant;
 import com.plasticene.fast.dao.DataSourceDAO;
 import com.plasticene.fast.dto.Column;
@@ -114,7 +116,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
-    public IPage<DataSourceDTO> getList(DataSourceQuery query) {
+    public PageResult<DataSourceDTO> getList(DataSourceQuery query) {
         LambdaQueryWrapper<DataSource> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.isNotBlank(query.getName())) {
             queryWrapper.likeRight(DataSource::getName, query.getName());
@@ -122,12 +124,14 @@ public class DataSourceServiceImpl implements DataSourceService {
         if (query.getType() != null) {
             queryWrapper.eq(DataSource::getType, query.getType());
         }
-        IPage<DataSource> pageParam = new Page(query.getPageNo(), query.getPageSize());
-        IPage<DataSource> dataSourceIPage = dataSourceDAO.selectPage(pageParam, queryWrapper);
-        List<DataSource> dataSources = dataSourceIPage.getRecords();
+        PageParam pageParam = new PageParam(query.getPageNo(), query.getPageSize());
+        PageResult<DataSource> pageResult = dataSourceDAO.selectPage(pageParam, queryWrapper);
+        List<DataSource> dataSources = pageResult.getList();
         List<DataSourceDTO> dataSourceDTOList = toDataSourceDTOList(dataSources);
-        Page result = FdsBeanUtils.copy(dataSourceIPage, Page.class);
-        result.setRecords(dataSourceDTOList);
+        PageResult<DataSourceDTO> result = new PageResult<>();
+        result.setList(dataSourceDTOList);
+        result.setTotal(pageResult.getTotal());
+        result.setPages(pageResult.getPages());
         return result;
     }
 

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.plasticene.boot.common.pojo.PageParam;
+import com.plasticene.boot.common.pojo.PageResult;
 import com.plasticene.fast.dao.FolderDAO;
 import com.plasticene.fast.service.FolderService;
 import com.plasticene.fast.constant.CommonConstant;
@@ -46,17 +48,19 @@ public class FolderServiceImpl extends ServiceImpl<FolderDAO, Folder> implements
     }
 
     @Override
-    public IPage<FolderDTO> getList(FolderQuery query) {
+    public PageResult<FolderDTO> getList(FolderQuery query) {
         LambdaQueryWrapper<Folder> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.isNotBlank(query.getName())) {
             queryWrapper.likeRight(Folder::getName, query.getName());
         }
-        IPage<Folder> pageParam = new Page(query.getPageNo(), query.getPageSize());
-        IPage<Folder> folderIPage = folderDAO.selectPage(pageParam, queryWrapper);
-        List<Folder> folders = folderIPage.getRecords();
-        List<FolderDTO> dataSourceDTOList = toFolderDTOList(folders);
-        Page result = FdsBeanUtils.copy(folderIPage, Page.class);
-        result.setRecords(dataSourceDTOList);
+        PageParam pageParam = new PageParam(query.getPageNo(), query.getPageSize());
+        PageResult<Folder> pageResult = folderDAO.selectPage(pageParam, queryWrapper);
+        List<Folder> folders = pageResult.getList();
+        List<FolderDTO> folderDTOList = toFolderDTOList(folders);
+        PageResult<FolderDTO> result = new PageResult<>();
+        result.setList(folderDTOList);
+        result.setTotal(pageResult.getTotal());
+        result.setPages(pageResult.getPages());
         return result;
     }
 

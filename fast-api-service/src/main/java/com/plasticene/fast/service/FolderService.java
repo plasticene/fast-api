@@ -1,6 +1,7 @@
 package com.plasticene.fast.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.plasticene.boot.common.pojo.PageResult;
 import com.plasticene.fast.dto.FolderDTO;
 import com.plasticene.fast.param.FolderParam;
 import com.plasticene.fast.query.FolderQuery;
@@ -16,6 +17,6 @@ public interface FolderService {
 
     void updateFolder(Long folderId, FolderParam folderParam);
 
-    IPage<FolderDTO> getList(FolderQuery folderQuery);
+    PageResult<FolderDTO> getList(FolderQuery folderQuery);
 
 }

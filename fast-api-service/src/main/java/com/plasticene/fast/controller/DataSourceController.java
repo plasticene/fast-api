@@ -1,6 +1,7 @@
 package com.plasticene.fast.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.plasticene.boot.common.pojo.PageResult;
 import com.plasticene.boot.web.core.anno.ResponseResultBody;
 import com.plasticene.fast.dto.Column;
 import com.plasticene.fast.dto.DataSourceDTO;
@@ -58,9 +59,9 @@ public class DataSourceController {
 
     @GetMapping
     @ApiOperation("查询数据源列表")
-    public IPage<DataSourceDTO> getList(DataSourceQuery query) {
-        IPage<DataSourceDTO> page = dataSourceService.getList(query);
-        return page;
+    public PageResult<DataSourceDTO> getList(DataSourceQuery query) {
+        PageResult<DataSourceDTO> pageResult = dataSourceService.getList(query);
+        return pageResult;
     }
 
     @GetMapping("/database/table")
