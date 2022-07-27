@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.plasticene.boot.mybatis.core.handlers.EncryptTypeHandler;
 import com.plasticene.boot.mybatis.core.handlers.JsonStringSetTypeHandler;
+import com.plasticene.boot.mybatis.core.metadata.BaseDO;
 import lombok.Data;
 
 import java.io.Serializable;
