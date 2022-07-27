@@ -1,5 +1,6 @@
 package com.plasticene.fast.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.AES;
 import com.plasticene.boot.cache.core.manager.MultilevelCache;
 import com.plasticene.boot.redis.core.anno.DistributedLock;
 import com.plasticene.boot.redis.core.anno.RateLimit;
@@ -7,6 +8,7 @@ import com.plasticene.boot.redis.core.enums.LimitType;
 import com.plasticene.fast.constant.CommonConstant;
 import com.plasticene.fast.entity.DataSource;
 import io.swagger.annotations.Api;
+import io.swagger.models.Swagger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -94,7 +96,7 @@ public class TestController {
         return dataSource;
     }
 
-    @RateLimit( period = 10, count = CommonConstant.RATE)
+    @RateLimit( period = 10, count = 3)
     @DistributedLock(key = "distributed-lock")
     @GetMapping("/lock")
     public void lock() {
@@ -105,5 +107,13 @@ public class TestController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        String text = "hello, 我们来了哦12345";
+        String key = AES.generateRandomKey();
+        System.out.println(key);
+        String encrypt = AES.encrypt(text, key);
+        System.out.println(encrypt);
     }
 }

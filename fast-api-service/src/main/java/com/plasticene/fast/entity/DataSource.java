@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.plasticene.boot.mybatis.core.handlers.EncryptTypeHandler;
 import com.plasticene.boot.mybatis.core.handlers.JsonStringSetTypeHandler;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Set;
 
 /**
@@ -28,6 +28,7 @@ public class DataSource extends BaseDO implements Serializable {
     @TableField(typeHandler = JsonStringSetTypeHandler.class)
     private Set<String> databaseList;
     private String userName;
+    @TableField(typeHandler = EncryptTypeHandler.class)
     private String password;
     private Integer type;
 }

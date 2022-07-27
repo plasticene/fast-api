@@ -34,7 +34,6 @@
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>com.plasticene.boot</groupId>
                 <artifactId>plasticene-boot-starter-banner</artifactId>

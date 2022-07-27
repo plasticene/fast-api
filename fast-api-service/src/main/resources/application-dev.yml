@@ -68,3 +68,5 @@ ptc:
     enable: true
   apiLog:
     enable: true
+  encrypt:
+    algorithm: aes
