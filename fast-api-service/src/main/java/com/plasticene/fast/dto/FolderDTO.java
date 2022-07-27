@@ -1,6 +1,6 @@
 package com.plasticene.fast.dto;
 
-import com.plasticene.fast.entity.BaseDO;
+import com.plasticene.boot.mybatis.core.metadata.BaseDO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
