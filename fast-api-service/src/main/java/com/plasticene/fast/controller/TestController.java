@@ -2,14 +2,16 @@ package com.plasticene.fast.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.AES;
 import com.plasticene.boot.cache.core.manager.MultilevelCache;
+import com.plasticene.boot.license.core.anno.License;
+import com.plasticene.boot.license.core.utils.DmcUtils;
 import com.plasticene.boot.redis.core.anno.DistributedLock;
 import com.plasticene.boot.redis.core.anno.RateLimit;
 import com.plasticene.boot.redis.core.enums.LimitType;
-import com.plasticene.fast.constant.CommonConstant;
+import com.plasticene.fast.dto.ServerInfo;
 import com.plasticene.fast.entity.DataSource;
 import io.swagger.annotations.Api;
-import io.swagger.models.Swagger;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +41,9 @@ public class TestController {
 
     @Resource
     private MultilevelCache multilevelCache;
+
+    @Value("${ptc.content}")
+    private String content;
 
 
     @GetMapping()
@@ -108,6 +113,31 @@ public class TestController {
             e.printStackTrace();
         }
     }
+
+    @GetMapping("/server/info")
+    public ServerInfo getServerInfo() {
+
+        ServerInfo info = new ServerInfo();
+        info.setSystemUuid(DmcUtils.getSystemUuid());
+        info.setCpuSerial(DmcUtils.getCpuId());
+        info.setMainBoardSerial(DmcUtils.getMainBordId());
+        return info;
+    }
+
+    @GetMapping("/license")
+    @License
+    public Integer testLicense() {
+        return 1;
+    }
+
+    @GetMapping("/value")
+    public String testValue() {
+        return content;
+    }
+
+
+
+
 
     public static void main(String[] args) {
         String text = "hello, 我们来了哦12345";

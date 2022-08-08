@@ -6,19 +6,18 @@ server:
 spring:
   application:
     name: fast-api-service
-  jackson:
-    time-zone: GMT+8
-    date-format: yyyy-MM-dd HH:mm:ss
-    #设置返回json数据null字段不显示
-    default-property-inclusion: non_null
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: root
-    url: jdbc:mysql://127.0.0.1:3306/fast_api?&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://110.42.224.58/fast_api?&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
   redis:
     host: 110.42.224.58
     port: 6379
+#  mvc:
+#    pathmatch:
+#      matching-strategy: ant_path_matcher
+
 
 
 #mybatis
@@ -64,9 +63,18 @@ swagger-info:
   email: shepherd_zfj163.com
 
 ptc:
+  content: 只有一个中国
   trace:
     enable: true
   apiLog:
     enable: true
   encrypt:
     algorithm: aes
+  license:
+    license-path: /Users/shepherdmy/Desktop/license/license.lic
+    private-keys-store-path: /Users/shepherdmy/Desktop/license/privateKeys.keystore
+    public-keys-store-path: /Users/shepherdmy/Desktop/license/publicCerts.keystore
+    verify-system-switch: false
+#    key-pass: 12345
+#    store-pass: 12345
+#    start-check: false
