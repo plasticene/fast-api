@@ -74,12 +74,15 @@ public class DataQueryServiceImpl implements DataQueryService {
             log.info("data query execute sql: "+sql);
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
+            int i = 1;
             while(rs.next()) {
                 Column column = new Column();
                 column.setColumnName(rs.getString(1));
                 column.setDataType(rs.getString(2));
                 column.setColumnType(rs.getString(3));
                 column.setColumnComment(rs.getString(4));
+                column.setIndex(i);
+                i++;
                 columns.add(column);
             }
             return columns;
