@@ -39,4 +39,8 @@ public class DataSourceParam {
     @ApiModelProperty("类型  0：MySQL 1：clickhouse  2：doris")
     @NotNull(message = "类型不能为空")
     private Integer type;
+    @ApiModelProperty("状态  0：关闭  1：启用")
+    private Integer status;
+    @ApiModelProperty("数据源id集合")
+    private List<Long> dataSourceIds;
 }

@@ -40,6 +40,8 @@ public class DataSourceDTO {
     private Date updateTime;
     @ApiModelProperty("选择的数据库")
     private String selectDatabase;
+    @ApiModelProperty("状态  0：关闭  1：启用")
+    private Integer status;
 
 
 }

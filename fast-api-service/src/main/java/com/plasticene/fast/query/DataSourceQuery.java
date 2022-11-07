@@ -14,4 +14,7 @@ public class DataSourceQuery extends BaseQuery{
     private String name;
     @ApiModelProperty("类型  0：MySQL 1：clickhouse  2：doris")
     private Integer type;
+
+    @ApiModelProperty("状态：0：关闭  1：开启")
+    private Integer status;
 }
