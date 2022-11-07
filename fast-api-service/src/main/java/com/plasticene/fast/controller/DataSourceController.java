@@ -26,7 +26,7 @@ import java.util.List;
  */
 @ResponseResultBody
 @RestController
-@RequestMapping("/data/source")
+@RequestMapping("/dataSource")
 @Api(tags = "数据源管理")
 public class DataSourceController {
 
@@ -57,11 +57,24 @@ public class DataSourceController {
         dataSourceService.batchDelDataSource(dataSourceIds);
     }
 
+    @ApiOperation("调整数据源状态(批量)")
+    @PutMapping("/status")
+    public void changeDataSourceStatus(@RequestBody DataSourceParam param) {
+        dataSourceService.changeDataSourceStatus(param.getDataSourceIds(), param.getStatus());
+    }
+
     @GetMapping
     @ApiOperation("查询数据源列表")
     public PageResult<DataSourceDTO> getList(DataSourceQuery query) {
         PageResult<DataSourceDTO> pageResult = dataSourceService.getList(query);
         return pageResult;
+    }
+
+    @GetMapping("/list")
+    @ApiOperation("查询所有可用的数据源")
+    public List<DataSourceDTO> getList() {
+        List<DataSourceDTO> list = dataSourceService.getList();
+        return list;
     }
 
     @GetMapping("/database/table")

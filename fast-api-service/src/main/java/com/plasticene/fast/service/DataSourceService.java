@@ -27,7 +27,11 @@ public interface DataSourceService {
 
     void batchDelDataSource(List<Long> dataSourceIds);
 
+    void changeDataSourceStatus(List<Long> dataSourceIds, Integer status);
+
     PageResult<DataSourceDTO> getList(DataSourceQuery query);
+
+    List<DataSourceDTO> getList();
 
     List<TableInfo> getTableInfo(Long dataSourceId, String databaseName);
 

@@ -3,6 +3,7 @@ package com.plasticene.fast.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.plasticene.boot.common.exception.BizException;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -116,6 +118,18 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
+    public void changeDataSourceStatus(List<Long> dataSourceIds, Integer status) {
+        if (CollectionUtils.isEmpty(dataSourceIds)) {
+            return;
+        }
+        LambdaUpdateWrapper<DataSource> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.in(DataSource::getId, dataSourceIds);
+        updateWrapper.set(DataSource::getStatus, status);
+        dataSourceDAO.update(new DataSource(), updateWrapper);
+    }
+
+
+    @Override
     public PageResult<DataSourceDTO> getList(DataSourceQuery query) {
         LambdaQueryWrapper<DataSource> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.isNotBlank(query.getName())) {
@@ -124,6 +138,10 @@ public class DataSourceServiceImpl implements DataSourceService {
         if (query.getType() != null) {
             queryWrapper.eq(DataSource::getType, query.getType());
         }
+        if (query.getStatus() != null) {
+            queryWrapper.eq(DataSource::getStatus, query.getStatus());
+        }
+        queryWrapper.orderByDesc(DataSource::getId);
         PageParam pageParam = new PageParam(query.getPageNo(), query.getPageSize());
         PageResult<DataSource> pageResult = dataSourceDAO.selectPage(pageParam, queryWrapper);
         List<DataSource> dataSources = pageResult.getList();
@@ -133,6 +151,15 @@ public class DataSourceServiceImpl implements DataSourceService {
         result.setTotal(pageResult.getTotal());
         result.setPages(pageResult.getPages());
         return result;
+    }
+
+    @Override
+    public List<DataSourceDTO> getList() {
+        LambdaQueryWrapper<DataSource> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(DataSource::getStatus, CommonConstant.IS_OPEN);
+        queryWrapper.orderByDesc(DataSource::getId);
+        List<DataSource> dataSources = dataSourceDAO.selectList(queryWrapper);
+        return toDataSourceDTOList(dataSources);
     }
 
     @Override
