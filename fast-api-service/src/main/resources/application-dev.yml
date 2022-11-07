@@ -10,9 +10,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: root
-    url: jdbc:mysql://110.42.224.58/fast_api?&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://127.0.0.1:3306/fast_api?&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
   redis:
-    host: 110.42.224.58
+    host: 10.10.0.10
     port: 6379
 #  mvc:
 #    pathmatch:
@@ -68,8 +68,8 @@ ptc:
     enable: true
   apiLog:
     enable: true
-  encrypt:
-    algorithm: aes
+#  encrypt:
+#    algorithm: aes
   license:
     license-path: /Users/shepherdmy/Desktop/license/license.lic
     private-keys-store-path: /Users/shepherdmy/Desktop/license/privateKeys.keystore
