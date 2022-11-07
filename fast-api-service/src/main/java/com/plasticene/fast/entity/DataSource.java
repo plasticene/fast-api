@@ -29,7 +29,8 @@ public class DataSource extends BaseDO implements Serializable {
     @TableField(typeHandler = JsonStringSetTypeHandler.class)
     private Set<String> databaseList;
     private String userName;
-    @TableField(typeHandler = EncryptTypeHandler.class)
+//    @TableField(typeHandler = EncryptTypeHandler.class)
     private String password;
     private Integer type;
+    private Integer status;
 }
