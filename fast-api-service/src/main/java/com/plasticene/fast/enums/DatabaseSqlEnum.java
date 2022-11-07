@@ -17,17 +17,15 @@ public enum DatabaseSqlEnum {
     /**
      * 数据源对应的表
      */
-    MYSQL_TABLE(0,"MySQL", SqlTypeConstant.DATABASE_TABLE, "select case when LENGTH(table_comment)>0 then " +
-            " table_comment else table_name  end tableComment, table_name as 'tableName' from information_schema.TABLES " +
+    MYSQL_TABLE(0,"MySQL", SqlTypeConstant.DATABASE_TABLE, "select table_comment as 'tableComment', table_name as 'tableName' from information_schema.TABLES " +
             " where TABLE_SCHEMA = '%s'"
     ),
 
-    CLICKHOUSE_TABLE(1,"ClickHouse", SqlTypeConstant.DATABASE_TABLE, "SELECT name as tableComment, name" +
+    CLICKHOUSE_TABLE(1,"ClickHouse", SqlTypeConstant.DATABASE_TABLE, "SELECT '' as tableComment, name" +
             " AS tableName FROM system.tables WHERE database = '%s'"
     ),
 
-    DORIS_TABLE(2,"Doris", SqlTypeConstant.DATABASE_TABLE, "select case when LENGTH(table_comment)>0 then " +
-            " table_comment else table_name  end tableComment, table_name as 'tableName' from information_schema.TABLES " +
+    DORIS_TABLE(2,"Doris", SqlTypeConstant.DATABASE_TABLE, "select table_comment as 'tableComment', table_name as 'tableName' from information_schema.TABLES " +
             " where TABLE_SCHEMA = '%s'"
     ),
 
