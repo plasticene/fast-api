@@ -154,15 +154,16 @@ public class DataQueryServiceImpl implements DataQueryService {
             dataResult.setContent(content);
             return dataResult;
         } catch (Exception e) {
-            log.error("execute sql error: {}", sql);
-            throw new BizException("数据查询失败");
+            log.error("execute sql error: ", e);
+            throw new BizException(e.getMessage());
         } finally {
             //关闭进行回收资源
             dataSourceManager.close(conn, pstmt, rs);
         }
     }
 
-    Integer getCount(DataSourceDTO ds, String sql) {
+    @Override
+    public Integer getCount(DataSourceDTO ds, String sql) {
         int total = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -177,7 +178,7 @@ public class DataQueryServiceImpl implements DataQueryService {
             }
         } catch (Exception e) {
             log.error("execute sql error:", e);
-            throw new BizException("数据查询失败");
+            throw new BizException(e.getMessage());
         } finally {
             dataSourceManager.close(conn, ps, rs);
         }

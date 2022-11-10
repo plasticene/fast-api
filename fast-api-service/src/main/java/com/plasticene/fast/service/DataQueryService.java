@@ -23,5 +23,7 @@ public interface DataQueryService {
 
     DataResultVO queryResult(DataSourceDTO ds, String sql);
 
+    Integer getCount(DataSourceDTO ds, String sql);
+
 
 }
