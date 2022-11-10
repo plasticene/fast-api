@@ -13,4 +13,7 @@ public interface CommonConstant {
 
     Integer IS_OPEN = 1;
     Integer IS_OFF = 0;
+
+    Integer IS_FAIL = 0;
+    Integer IS_SUCCESS = 1;
 }
