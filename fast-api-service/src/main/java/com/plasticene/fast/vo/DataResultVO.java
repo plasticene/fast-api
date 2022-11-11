@@ -26,6 +26,10 @@ public class DataResultVO {
 
     private Integer current;
 
+    private Boolean isSuccess;
+
+    private String sqlLog;
+
     public DataResultVO() {
     }
     public DataResultVO(List<Column> head, List<Map<String, Object>> content) {
