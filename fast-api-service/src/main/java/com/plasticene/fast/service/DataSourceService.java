@@ -11,6 +11,7 @@ import com.plasticene.fast.query.DataSourceQuery;
 import com.plasticene.fast.vo.DataResultVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author fjzheng
@@ -38,6 +39,10 @@ public interface DataSourceService {
     List<Column> getTableStruct(Long dataSourceId, String databaseName, String tableName);
 
     DataResultVO getTableData(Long dataSourceId, String databaseName, String tableName, BaseQuery query);
+
+    Map<Long, String> getDataSourceMap(List<Long> dataSourceIds);
+
+    DataSourceDTO getDataSourceDTO(Long dataSourceId);
 
 
 }

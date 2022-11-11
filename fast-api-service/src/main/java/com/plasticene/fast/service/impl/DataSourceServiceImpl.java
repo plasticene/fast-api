@@ -4,11 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.plasticene.boot.common.exception.BizException;
 import com.plasticene.boot.common.pojo.PageParam;
 import com.plasticene.boot.common.pojo.PageResult;
+import com.plasticene.boot.mybatis.core.query.LambdaQueryWrapperX;
 import com.plasticene.fast.constant.CommonConstant;
 import com.plasticene.fast.dao.DataSourceDAO;
 import com.plasticene.fast.dto.Column;
@@ -31,15 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -195,7 +190,21 @@ public class DataSourceServiceImpl implements DataSourceService {
         return dataResultVO;
     }
 
+    @Override
+    public Map<Long, String> getDataSourceMap(List<Long> dataSourceIds) {
+        if (CollectionUtils.isEmpty(dataSourceIds)) {
+            return new HashMap<>();
+        }
+        LambdaQueryWrapperX<DataSource> queryWrapperX = new LambdaQueryWrapperX<>();
+        queryWrapperX.select(DataSource::getId, DataSource::getName);
+        queryWrapperX.in(DataSource::getId, dataSourceIds);
+        List<DataSource> dataSources = dataSourceDAO.selectList(queryWrapperX);
+        Map<Long, String> map = dataSources.parallelStream().collect(Collectors.toMap(DataSource::getId, DataSource::getName));
+        return map;
+    }
 
+
+    @Override
     public DataSourceDTO getDataSourceDTO(Long dataSourceId) {
         DataSource dataSource = dataSourceDAO.selectById(dataSourceId);
         return toDataSourceDTO(dataSource);
