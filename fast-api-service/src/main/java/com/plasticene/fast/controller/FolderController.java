@@ -1,6 +1,5 @@
 package com.plasticene.fast.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.plasticene.boot.common.pojo.PageResult;
 import com.plasticene.boot.web.core.anno.ResponseResultBody;
 import com.plasticene.fast.dto.FolderDTO;
@@ -50,9 +49,15 @@ public class FolderController {
     @ApiOperation("删除分组(批量)")
     public void delFolder(@RequestBody List<Long> folderIds) {
 
-
     }
 
+
+    @ApiOperation("根据类型获取对应分组列表")
+    @GetMapping("/list")
+    public List<FolderDTO> getList(@RequestParam("type") Integer type) {
+        List<FolderDTO> list = folderService.getList(type);
+        return list;
+    }
 
 
 }

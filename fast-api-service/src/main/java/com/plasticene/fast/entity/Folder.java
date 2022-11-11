@@ -19,4 +19,5 @@ public class Folder extends BaseDO implements Serializable {
     private Long id;
     private String name;
     private Long parentId;
+    private Integer type;
 }

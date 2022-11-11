@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.plasticene.boot.common.pojo.PageParam;
 import com.plasticene.boot.common.pojo.PageResult;
+import com.plasticene.boot.mybatis.core.query.LambdaQueryWrapperX;
 import com.plasticene.fast.dao.FolderDAO;
 import com.plasticene.fast.service.FolderService;
 import com.plasticene.fast.constant.CommonConstant;
@@ -21,7 +22,10 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author fjzheng
@@ -62,6 +66,27 @@ public class FolderServiceImpl extends ServiceImpl<FolderDAO, Folder> implements
         result.setTotal(pageResult.getTotal());
         result.setPages(pageResult.getPages());
         return result;
+    }
+
+    @Override
+    public Map<Long, String> getFolderMap(List<Long> folderIds) {
+        if (CollectionUtils.isEmpty(folderIds)) {
+            return new HashMap<>();
+        }
+        LambdaQueryWrapper<Folder> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Folder::getId, folderIds);
+        queryWrapper.select(Folder::getId, Folder::getName);
+        List<Folder> folders = folderDAO.selectList(queryWrapper);
+        Map<Long, String> map = folders.parallelStream().collect(Collectors.toMap(Folder::getId, Folder::getName));
+        return map;
+    }
+
+    @Override
+    public List<FolderDTO> getList(Integer type) {
+        LambdaQueryWrapperX<Folder> queryWrapperX = new LambdaQueryWrapperX<>();
+        queryWrapperX.eq(Folder::getType, type);
+        List<Folder> folders = folderDAO.selectList(queryWrapperX);
+        return toFolderDTOList(folders);
     }
 
     List<FolderDTO> toFolderDTOList(List<Folder> folders) {
