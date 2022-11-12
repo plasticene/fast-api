@@ -184,4 +184,22 @@ public class DataQueryServiceImpl implements DataQueryService {
         }
         return total;
     }
+
+    @Override
+    public void testSql(DataSourceDTO ds, String sql) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        conn = dataSourceManager.getConn(ds);
+        try {
+            log.info("data query execute sql: "+sql);
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+        } catch (Exception e) {
+            log.error("execute sql error:", e);
+            throw new BizException("执行SQL失败");
+        } finally {
+            dataSourceManager.close(conn, ps, rs);
+        }
+    }
 }

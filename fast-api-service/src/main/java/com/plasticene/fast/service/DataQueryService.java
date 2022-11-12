@@ -25,5 +25,7 @@ public interface DataQueryService {
 
     Integer getCount(DataSourceDTO ds, String sql);
 
+    void testSql(DataSourceDTO ds, String sql);
+
 
 }
