@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
  * @date 2022/6/24 17:29
  */
 @RestController
-@RequestMapping("/api/data")
+@RequestMapping("/fapi/")
 @Api(tags = "api数据")
 @Slf4j
 public class ApiDataController {
