@@ -56,20 +56,21 @@ public class ApiInfoController {
     @GetMapping("/release/record")
     @ApiOperation("api发布历史记录")
     public List<ApiReleaseDTO> releaseRecord(@RequestParam("id") Long id) {
-        return null;
+        return apiInfoService.releaseRecord(id);
     }
 
 
     @PostMapping("/offline/{id}")
     @ApiOperation("下线api")
     public void offlineApi(@PathVariable("id") Long id) {
-
+        apiInfoService.offlineApi(id);
     }
 
     @GetMapping
     @ApiOperation("api列表")
     public PageResult<ApiInfoDTO> getList(ApiInfoQuery query) {
-        return null;
+        PageResult<ApiInfoDTO> result = apiInfoService.getList(query);
+        return result;
     }
 
 

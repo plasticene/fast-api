@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.plasticene.boot.mybatis.core.metadata.BaseDO;
 import com.plasticene.fast.dto.Parameter;
+import com.plasticene.fast.handlers.JsonListTypeHandler;
 import lombok.Data;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class ApiRelease extends BaseDO {
     private Long dataSourceId;
     private String databaseName;
     private String sqlContent;
-    @TableField(typeHandler = JacksonTypeHandler.class)
+    @TableField(typeHandler = JsonListTypeHandler.class)
     private List<Parameter> param;
     private String response;
     private Long apiInfoId;

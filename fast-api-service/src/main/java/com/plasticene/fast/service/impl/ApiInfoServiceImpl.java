@@ -1,8 +1,12 @@
 package com.plasticene.fast.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.google.common.collect.Lists;
 import com.plasticene.boot.common.exception.BizException;
+import com.plasticene.boot.common.pojo.PageParam;
 import com.plasticene.boot.common.pojo.PageResult;
 import com.plasticene.boot.common.utils.PtcBeanUtils;
+import com.plasticene.boot.mybatis.core.query.LambdaQueryWrapperX;
 import com.plasticene.fast.constant.ApiConstant;
 import com.plasticene.fast.dao.ApiInfoDAO;
 import com.plasticene.fast.dao.ApiReleaseDAO;
@@ -18,6 +22,7 @@ import com.plasticene.fast.query.ApiInfoQuery;
 import com.plasticene.fast.service.ApiInfoService;
 import com.plasticene.fast.service.DataQueryService;
 import com.plasticene.fast.service.DataSourceService;
+import com.plasticene.fast.service.FolderService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author fjzheng
@@ -44,6 +50,8 @@ public class ApiInfoServiceImpl implements ApiInfoService {
     private DataQueryService dataQueryService;
     @Resource
     private DataSourceService dataSourceService;
+    @Resource
+    private FolderService folderService;
     @Resource
     private DynamicSqlParser sqlParser;
 
@@ -137,21 +145,71 @@ public class ApiInfoServiceImpl implements ApiInfoService {
 
     @Override
     public List<ApiReleaseDTO> releaseRecord(Long id) {
-        return null;
+        LambdaQueryWrapperX<ApiRelease> queryWrapperX = new LambdaQueryWrapperX<>();
+        queryWrapperX.eq(ApiRelease::getApiInfoId, id);
+        queryWrapperX.orderByDesc(ApiRelease::getId);
+        List<ApiRelease> apiReleases = apiReleaseDAO.selectList(queryWrapperX);
+        List<ApiReleaseDTO> apiReleaseDTOList = new ArrayList<>();
+        apiReleases.forEach(apiRelease -> {
+            ApiReleaseDTO apiReleaseDTO = PtcBeanUtils.copy(apiRelease, ApiReleaseDTO.class);
+            apiReleaseDTOList.add(apiReleaseDTO);
+        });
+        return apiReleaseDTOList;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void offlineApi(Long id) {
+        LambdaUpdateWrapper<ApiInfo> updateWrapper = new LambdaUpdateWrapper<>();
+        List<Integer> statusList = Lists.newArrayList(ApiConstant.API_STATUS_RELEASE, ApiConstant.API_STATUS_CHANGE);
+        updateWrapper.eq(ApiInfo::getId, id).in(ApiInfo::getStatus, statusList);
+        updateWrapper.set(ApiInfo::getStatus, ApiConstant.API_STATUS_OFFLINE);
+        int update = apiInfoDAO.update(new ApiInfo(), updateWrapper);
+        if (update < 1) {
+            throw new BizException("只能下线已发布或者已更新的接口");
+        }
 
     }
 
     @Override
     public PageResult<ApiInfoDTO> getList(ApiInfoQuery query) {
-        return null;
+        LambdaQueryWrapperX<ApiInfo> queryWrapperX = new LambdaQueryWrapperX<>();
+        queryWrapperX.likeIfPresent(ApiInfo::getName, query.getName());
+        queryWrapperX.eqIfPresent(ApiInfo::getFolderId, query.getFolderId());
+        queryWrapperX.eqIfPresent(ApiInfo::getStatus, query.getStatus());
+        queryWrapperX.orderByDesc(ApiInfo::getId);
+        queryWrapperX.select(ApiInfo::getId, ApiInfo::getName, ApiInfo::getPath, ApiInfo::getFolderId,
+                ApiInfo::getDataSourceId, ApiInfo::getType, ApiInfo::getStatus, ApiInfo::getReleaseTime);
+        PageParam pageParam = new PageParam(query.getPageNo(), query.getPageSize());
+        PageResult<ApiInfo> pageResult = apiInfoDAO.selectPage(pageParam, queryWrapperX);
+        List<ApiInfoDTO> apiInfoDTOList = toApiInfoDTOList(pageResult.getList());
+        PageResult<ApiInfoDTO> result = new PageResult<>();
+        result.setList(apiInfoDTOList);
+        result.setPages(pageResult.getPages());
+        result.setTotal(pageResult.getTotal());
+        return result;
     }
 
     public ApiInfo getApiInfo(Long id) {
         return apiInfoDAO.selectById(id);
+    }
+
+    List<ApiInfoDTO> toApiInfoDTOList(List<ApiInfo> apiInfos) {
+        List<ApiInfoDTO> apiInfoDTOList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(apiInfos)) {
+            return apiInfoDTOList;
+        }
+        List<Long> dataSourceIds = apiInfos.parallelStream().map(ApiInfo::getDataSourceId).distinct().collect(Collectors.toList());
+        List<Long> folderIds = apiInfos.parallelStream().map(ApiInfo::getFolderId).distinct().collect(Collectors.toList());
+        Map<Long, String> dataSourceMap = dataSourceService.getDataSourceMap(dataSourceIds);
+        Map<Long, String> folderMap = folderService.getFolderMap(folderIds);
+        apiInfos.forEach(apiInfo -> {
+            ApiInfoDTO apiInfoDTO = PtcBeanUtils.copy(apiInfo, ApiInfoDTO.class);
+            apiInfoDTO.setDataSourceName(dataSourceMap.get(apiInfo.getDataSourceId()));
+            apiInfoDTO.setFolderName(folderMap.get(apiInfo.getFolderId()));
+            apiInfoDTOList.add(apiInfoDTO);
+        });
+        return apiInfoDTOList;
     }
 
     Map<String, String> mockParam(List<Parameter> parameters) {
