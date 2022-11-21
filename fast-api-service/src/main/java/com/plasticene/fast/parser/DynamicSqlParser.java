@@ -27,11 +27,14 @@ public class DynamicSqlParser {
     /**
      * 常量表达式
      */
-    public static final String CONSTANT_CONDITION = "1 = 1";
+    private static final String CONSTANT_CONDITION = "1 = 1";
+    private static final String VAR_PREFIX = "#{";
+
+
 
     /**
      * 存放解析出来的带@var动态参数的条件语句   动态参数 → 条件set集合
-     * 在sql语句一个动态参数`@var`有可能用在了不同地方，如@orgId参数用在了org_id = @orgId 和 o.id = @orgId这两个where条件中，
+     * 在sql语句一个动态参数`#{var}`有可能用在了不同地方，如@orgId参数用在了org_id = #{orgId} 和 o.id = #{orgId}这两个where条件中，
      * 所以要对应一个set
      */
     public static final ThreadLocal<Map<String, Set<String>>> varToWhere = new ThreadLocal<>();
@@ -43,13 +46,15 @@ public class DynamicSqlParser {
         for (Map.Entry<String, Set<String>> entry : map.entrySet()) {
             String var = entry.getKey();
             Set<String> wheres = entry.getValue();
+
             String replaceWhere = null;
             for(String where : wheres) {
                 // 没有传这个参数，那么把这个条件变成1=1
-                if (!params.containsKey(var)) {
+                String field = var.substring(2, var.length() - 1);
+                if (!params.containsKey(field)) {
                     replaceWhere = CONSTANT_CONDITION;
                 } else {
-                    replaceWhere = where.replaceAll(var, params.get(var));
+                    replaceWhere = where.replace(var, params.get(field));
                 }
                 beautySQL = beautySQL.replace(where, replaceWhere);
             }
@@ -248,7 +253,7 @@ public class DynamicSqlParser {
         SQLExpr sqlExpr = targetList.get(0);
         if (sqlExpr instanceof SQLVariantRefExpr) {
             String var = SQLUtils.toSQLString(sqlExpr);
-            if (var.startsWith("@")) {
+            if (var.startsWith(VAR_PREFIX)) {
                 String where = SQLUtils.toSQLString(sqlInListExpr);
                 setVarToWhere(var, where);
             }
@@ -261,7 +266,7 @@ public class DynamicSqlParser {
         SQLExpr right = sqlBinaryOpExpr.getRight();
         if (right instanceof SQLVariantRefExpr) {
             String var = SQLUtils.toSQLString(right);
-            if (var.startsWith("@")) {
+            if (var.startsWith(VAR_PREFIX)) {
                 String where = SQLUtils.toSQLString(sqlBinaryOpExpr);
                 setVarToWhere(var, where);
             }
