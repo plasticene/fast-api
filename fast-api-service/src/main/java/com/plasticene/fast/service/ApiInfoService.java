@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface ApiInfoService {
 
-    void addApiInfo(ApiInfoParam param);
+    Long addApiInfo(ApiInfoParam param);
 
     void updateApiInfo(Long id, ApiInfoParam param);
 
@@ -28,6 +28,8 @@ public interface ApiInfoService {
     void offlineApi(Long id);
 
     PageResult<ApiInfoDTO> getList(ApiInfoQuery query);
+
+    ApiInfoDTO getApiInfo(Long id);
 
 
 
