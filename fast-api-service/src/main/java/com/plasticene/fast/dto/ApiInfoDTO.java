@@ -41,4 +41,6 @@ public class ApiInfoDTO {
     private Long folderId;
     @ApiModelProperty("分组名称")
     private String folderName;
+    @ApiModelProperty("是否冒烟测试通过")
+    private Boolean isPass;
 }
