@@ -24,4 +24,6 @@ public class Parameter {
     private Map<String,String> items;
     @ApiModelProperty("参数描述")
     private String description;
+    @ApiModelProperty("value")
+    private String value;
 }
