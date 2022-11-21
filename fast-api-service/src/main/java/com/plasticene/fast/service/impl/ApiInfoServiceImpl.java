@@ -66,14 +66,16 @@ public class ApiInfoServiceImpl implements ApiInfoService {
         PARAM_MOCK_DATA.put("date", "'2022-08-08 00:00:00'");
         PARAM_MOCK_DATA.put("array_string", "'a','b','c'");
         PARAM_MOCK_DATA.put("array_number", "1,2,3");
+        PARAM_MOCK_DATA.put("array_date", "'2022-08-08 00:00:00', '2022-09-09 00:00:00'");
     }
 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void addApiInfo(ApiInfoParam param) {
+    public Long addApiInfo(ApiInfoParam param) {
         ApiInfo apiInfo = PtcBeanUtils.copy(param, ApiInfo.class);
         apiInfoDAO.insert(apiInfo);
+        return apiInfo.getId();
     }
 
     /**
@@ -90,6 +92,7 @@ public class ApiInfoServiceImpl implements ApiInfoService {
             apiInfo.setStatus(ApiConstant.API_STATUS_CHANGE);
         }
         apiInfoDAO.updateById(apiInfo);
+        redisTemplate.delete(API_SMOKE_PREFIX + id);
     }
 
     /**
@@ -183,6 +186,13 @@ public class ApiInfoServiceImpl implements ApiInfoService {
         PageParam pageParam = new PageParam(query.getPageNo(), query.getPageSize());
         PageResult<ApiInfo> pageResult = apiInfoDAO.selectPage(pageParam, queryWrapperX);
         List<ApiInfoDTO> apiInfoDTOList = toApiInfoDTOList(pageResult.getList());
+        apiInfoDTOList.forEach(apiInfoDTO -> {
+            Object isSmoke = redisTemplate.opsForValue().get(API_SMOKE_PREFIX + apiInfoDTO.getId());
+            if (Objects.equals(isSmoke, 1)) {
+                apiInfoDTO.setIsPass(true);
+            }
+        });
+
         PageResult<ApiInfoDTO> result = new PageResult<>();
         result.setList(apiInfoDTOList);
         result.setPages(pageResult.getPages());
@@ -190,8 +200,15 @@ public class ApiInfoServiceImpl implements ApiInfoService {
         return result;
     }
 
-    public ApiInfo getApiInfo(Long id) {
-        return apiInfoDAO.selectById(id);
+    @Override
+    public ApiInfoDTO getApiInfo(Long id) {
+        ApiInfo apiInfo = apiInfoDAO.selectById(id);
+        ApiInfoDTO apiInfoDTO = PtcBeanUtils.copy(apiInfo, ApiInfoDTO.class);
+        Object isSmoke = redisTemplate.opsForValue().get(API_SMOKE_PREFIX + apiInfoDTO.getId());
+        if (Objects.equals(isSmoke, 1)) {
+            apiInfoDTO.setIsPass(true);
+        }
+        return apiInfoDTO;
     }
 
     List<ApiInfoDTO> toApiInfoDTOList(List<ApiInfo> apiInfos) {
@@ -221,9 +238,9 @@ public class ApiInfoServiceImpl implements ApiInfoService {
             String type = parameter.getType();
             if (Objects.equals(type, "array")) {
                 String subType = parameter.getItems().get("type");
-                result.put("@"+parameter.getName(), PARAM_MOCK_DATA.get(type + "_" + subType));
+                result.put(parameter.getName(), PARAM_MOCK_DATA.get(type + "_" + subType));
             } else {
-                result.put("@"+parameter.getName(), PARAM_MOCK_DATA.get(type));
+                result.put(parameter.getName(), PARAM_MOCK_DATA.get(type));
             }
         });
         return result;
