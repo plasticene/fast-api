@@ -30,14 +30,14 @@ public class ApiInfoController {
 
     @PostMapping
     @ApiOperation("添加api")
-    public void addApiInfo(@RequestBody @Validated ApiInfoParam param) {
-        apiInfoService.addApiInfo(param);
+    public Long addApiInfo(@RequestBody @Validated ApiInfoParam param) {
+        return apiInfoService.addApiInfo(param);
     }
 
     @PutMapping("/{id}")
     @ApiOperation("修改api")
     public void updateApiInfo(@RequestBody ApiInfoParam param, @PathVariable("id") Long id) {
-
+        apiInfoService.updateApiInfo(id, param);
     }
 
     @PostMapping("/smoke/{id}")
@@ -71,6 +71,12 @@ public class ApiInfoController {
     public PageResult<ApiInfoDTO> getList(ApiInfoQuery query) {
         PageResult<ApiInfoDTO> result = apiInfoService.getList(query);
         return result;
+    }
+
+    @GetMapping("/{id}")
+    @ApiOperation("查询api详情")
+    public ApiInfoDTO getApiInfo(@PathVariable("id") Long id) {
+        return apiInfoService.getApiInfo(id);
     }
 
 
