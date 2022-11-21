@@ -1,10 +1,13 @@
 package com.plasticene.fast.param;
 
+import com.plasticene.fast.dto.Parameter;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author fjzheng
@@ -27,4 +30,6 @@ public class SqlExecuteParam {
     private Integer pageSize = 20;
     @ApiModelProperty("页码")
     private Integer pageNo = 1;
+
+    private List<Parameter> sqlParam;
 }

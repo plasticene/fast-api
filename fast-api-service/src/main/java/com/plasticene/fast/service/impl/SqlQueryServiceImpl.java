@@ -7,10 +7,12 @@ import com.plasticene.boot.common.utils.PtcBeanUtils;
 import com.plasticene.boot.mybatis.core.query.LambdaQueryWrapperX;
 import com.plasticene.fast.dao.SqlQueryDAO;
 import com.plasticene.fast.dto.DataSourceDTO;
+import com.plasticene.fast.dto.Parameter;
 import com.plasticene.fast.dto.SqlQueryDTO;
 import com.plasticene.fast.entity.SqlQuery;
 import com.plasticene.fast.param.SqlExecuteParam;
 import com.plasticene.fast.param.SqlQueryParam;
+import com.plasticene.fast.parser.DynamicSqlParser;
 import com.plasticene.fast.query.SqlQueryQuery;
 import com.plasticene.fast.service.DataQueryService;
 import com.plasticene.fast.service.DataSourceService;
@@ -18,6 +20,7 @@ import com.plasticene.fast.service.FolderService;
 import com.plasticene.fast.service.SqlQueryService;
 import com.plasticene.fast.vo.DataResultVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -25,9 +28,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,6 +48,8 @@ public class SqlQueryServiceImpl implements SqlQueryService {
     private FolderService folderService;
     @Resource
     private DataQueryService dataQueryService;
+    @Resource
+    private DynamicSqlParser sqlParser;
 
 
     @Override
@@ -83,10 +86,35 @@ public class SqlQueryServiceImpl implements SqlQueryService {
     public DataResultVO executeSql(SqlExecuteParam param) {
         Long dataSourceId = param.getDataSourceId();
         String sqlContent = param.getSqlContent();
+        List<Parameter> sqlParam = param.getSqlParam();
         Integer pageNo = param.getPageNo();
         Integer pageSize = param.getPageSize();
         DataSourceDTO ds = dataSourceService.getDataSourceDTO(dataSourceId);
         ds.setSelectDatabase(param.getDatabaseName());
+        if (!CollectionUtils.isEmpty(sqlParam)) {
+            Map<String, String> map = new HashMap<>();
+            sqlParam.forEach(parameter -> {
+                String value = parameter.getValue();
+                String type = parameter.getType();
+                if (Objects.equals(type, "string") || Objects.equals(type, "date")) {
+                    value = "'" + value + "'";
+                }
+                if (Objects.equals(type, "array")) {
+                    Map<String, String> items = parameter.getItems();
+                    String subType = items.get("type");
+                    if (Objects.equals(subType, "string") || Objects.equals(subType, "date")) {
+                        String str = value.replace(" ", "");
+                        List<String> valList = Arrays.asList(StringUtils.split(str, ","));
+                        for(int i = 0; i < valList.size(); i++) {
+                            valList.set(i, "'" + valList.get(i) + "'");
+                        }
+                        value = StringUtils.join(valList, ",");
+                    }
+                }
+                map.put(parameter.getName(), value);
+            });
+            sqlContent = sqlParser.parseSQL(sqlContent, map);
+        }
         String finalSql = new StringBuilder("select * from (").append(sqlContent).append(") as t limit ")
                 .append((pageNo-1)*pageSize).append(",").append(pageSize).toString();
         String countSql = new StringBuilder("select count(*) from (").append(sqlContent).append(") as t").toString();
