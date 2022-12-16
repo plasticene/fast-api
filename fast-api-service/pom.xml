@@ -42,10 +42,10 @@
             <artifactId>plasticene-boot-starter-cache</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.plasticene.boot</groupId>
-            <artifactId>plasticene-boot-starter-license</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.plasticene.boot</groupId>-->
+<!--            <artifactId>plasticene-boot-starter-license</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.alibaba</groupId>
