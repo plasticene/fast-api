@@ -2,8 +2,6 @@ package com.plasticene.fast.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.AES;
 import com.plasticene.boot.cache.core.manager.MultilevelCache;
-import com.plasticene.boot.license.core.anno.License;
-import com.plasticene.boot.license.core.utils.DmcUtils;
 import com.plasticene.boot.redis.core.anno.DistributedLock;
 import com.plasticene.boot.redis.core.anno.RateLimit;
 import com.plasticene.boot.redis.core.enums.LimitType;
@@ -42,8 +40,6 @@ public class TestController {
     @Resource
     private MultilevelCache multilevelCache;
 
-    @Value("${ptc.content}")
-    private String content;
 
 
     @GetMapping()
@@ -114,28 +110,21 @@ public class TestController {
         }
     }
 
-    @GetMapping("/server/info")
-    public ServerInfo getServerInfo() {
-
-        ServerInfo info = new ServerInfo();
-        info.setSystemUuid(DmcUtils.getSystemUuid());
-        info.setCpuSerial(DmcUtils.getCpuId());
-        info.setMainBoardSerial(DmcUtils.getMainBordId());
-        return info;
-    }
-
-    @GetMapping("/license")
-    @License
-    public Integer testLicense() {
-        return 1;
-    }
-
-    @GetMapping("/value")
-    public String testValue() {
-        return content;
-    }
-
-
+//    @GetMapping("/server/info")
+//    public ServerInfo getServerInfo() {
+//
+//        ServerInfo info = new ServerInfo();
+//        info.setSystemUuid(DmcUtils.getSystemUuid());
+//        info.setCpuSerial(DmcUtils.getCpuId());
+//        info.setMainBoardSerial(DmcUtils.getMainBordId());
+//        return info;
+//    }
+//
+//    @GetMapping("/license")
+//    @License
+//    public Integer testLicense() {
+//        return 1;
+//    }
 
 
 
