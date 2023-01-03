@@ -1,19 +1,20 @@
 package com.plasticene.fast.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.AES;
+import com.mzt.logapi.starter.annotation.LogRecord;
 import com.plasticene.boot.cache.core.manager.MultilevelCache;
 import com.plasticene.boot.redis.core.anno.DistributedLock;
 import com.plasticene.boot.redis.core.anno.RateLimit;
 import com.plasticene.boot.redis.core.enums.LimitType;
 import com.plasticene.fast.dto.ServerInfo;
 import com.plasticene.fast.entity.DataSource;
+import com.plasticene.fast.param.DataSourceParam;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -109,6 +110,34 @@ public class TestController {
             e.printStackTrace();
         }
     }
+
+
+    @ApiOperation("测试log")
+    @PostMapping("/biz/log")
+    @LogRecord(success = "添加了一个数据源名称为：{{#dataSource.name}}, host：{{#dataSource.host}}", type = "1", bizNo = "123")
+    public void testLog(@RequestBody DataSourceParam dataSource) {
+        System.out.println(dataSource);
+        String s = dataSource.getType().toString();
+        System.out.println(s);
+
+    }
+
+
+    @DeleteMapping("/del")
+    public void delTest(@RequestBody DataSourceParam param) {
+        System.out.println(param);
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 //    @GetMapping("/server/info")
 //    public ServerInfo getServerInfo() {
