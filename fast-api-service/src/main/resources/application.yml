@@ -12,7 +12,7 @@ spring:
     #设置返回json数据null字段不显示
     default-property-inclusion: non_null
   profiles:
-    active: dev
+    active: test
 
 
 
