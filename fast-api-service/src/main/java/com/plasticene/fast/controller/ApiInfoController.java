@@ -22,7 +22,7 @@ import java.util.List;
  */
 @ResponseResultBody
 @RestController
-@RequestMapping("/api/info")
+@RequestMapping("/fds/api/info")
 @Api(tags = "api管理")
 public class ApiInfoController {
     @Resource

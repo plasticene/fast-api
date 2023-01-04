@@ -20,7 +20,7 @@ import javax.annotation.Resource;
  * @version 1.0
  * @date 2022/11/7 09:53
  */
-@RequestMapping("/sql/query")
+@RequestMapping("/fds/sql/query")
 @Api(tags = "SQL查询管理")
 @RestController
 @ResponseResultBody

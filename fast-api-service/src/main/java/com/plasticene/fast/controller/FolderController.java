@@ -21,7 +21,7 @@ import java.util.List;
  */
 @ResponseResultBody
 @RestController
-@RequestMapping("/folder")
+@RequestMapping("/fds/folder")
 @Api(tags = "分组管理")
 public class FolderController {
     @Resource

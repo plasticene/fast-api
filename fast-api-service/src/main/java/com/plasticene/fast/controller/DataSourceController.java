@@ -26,7 +26,7 @@ import java.util.List;
  */
 @ResponseResultBody
 @RestController
-@RequestMapping("/dataSource")
+@RequestMapping("/fds/dataSource")
 @Api(tags = "数据源管理")
 public class DataSourceController {
 

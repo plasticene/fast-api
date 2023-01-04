@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Api(tags = "应用管理")
-@RequestMapping("/app")
+@RequestMapping("/fds/app")
 public class ApplicationController {
 }

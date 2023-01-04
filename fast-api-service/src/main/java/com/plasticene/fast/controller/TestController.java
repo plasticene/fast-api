@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2022/7/21 17:20
  */
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/fds/test")
 @Api(tags = "测试样例管理")
 @Slf4j
 public class TestController {

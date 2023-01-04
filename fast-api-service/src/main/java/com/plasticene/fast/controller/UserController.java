@@ -19,7 +19,7 @@ import java.util.UUID;
  */
 @ResponseResultBody
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/fds/user")
 @Api(tags = "用户管理")
 @Slf4j
 public class UserController {
