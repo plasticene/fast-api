@@ -1,7 +1,5 @@
 server:
   port: 18888
-  servlet:
-    context-path: /fds
 
 spring:
   application:
