@@ -119,6 +119,12 @@
             <version>3.0.3</version>
         </dependency>
 
+        <!-- 实现对 Spring Security 的自动化配置 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
 
 
 
