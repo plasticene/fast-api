@@ -1,12 +1,14 @@
 package com.plasticene.fast.controller;
 
 import com.plasticene.boot.web.core.anno.ResponseResultBody;
+import com.plasticene.fast.param.LoginParam;
+import com.plasticene.fast.service.AuthService;
+import com.plasticene.fast.vo.LoginVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * @author fjzheng
@@ -18,11 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/fds/auth")
 @Api(tags = "权限认证管理")
 public class AuthController {
+    @Resource
+    private AuthService authService;
 
     @PostMapping("/login")
     @ApiOperation("登录")
-    public void login() {
-
+    public LoginVO login(@RequestBody LoginParam param) {
+        return authService.login(param);
     }
 
     @PostMapping("/code")
