@@ -13,8 +13,14 @@ spring:
     default-property-inclusion: non_null
   profiles:
     active: test
+#  security:
+#    user:
+#      name: shepherd
+#      password: shepherd
+#      roles: NORMAL
 
 excludeUrlPatterns: POST/fds/auth/login
+
 
 
 
