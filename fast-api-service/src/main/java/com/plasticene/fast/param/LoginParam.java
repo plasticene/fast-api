@@ -14,14 +14,20 @@ import javax.validation.constraints.Pattern;
  */
 @Data
 public class LoginParam {
-    @ApiModelProperty(value = "账号", required = true, example = "1786666688888")
-    @NotEmpty(message = "登录账号不能为空")
-    @Length(min = 4, max = 16, message = "账号长度为 4-16 位")
-    @Pattern(regexp = "^[A-Za-z0-9]+$", message = "账号格式为数字以及字母")
+    @ApiModelProperty(value = "账号", required = true, example = "shepherd")
     private String username;
 
     @ApiModelProperty(value = "密码", required = true, example = "pass123456")
-    @NotEmpty(message = "密码不能为空")
-    @Length(min = 4, max = 16, message = "密码长度为 4-16 位")
     private String password;
+
+    @ApiModelProperty("登录方式 0：用户名  1：手机号  2：扫码")
+    private Integer type;
+
+    @ApiModelProperty("手机号")
+    public String mobile;
+
+    @ApiModelProperty("验证码")
+    public String code;
+
+
 }
