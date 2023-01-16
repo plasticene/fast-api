@@ -2,6 +2,8 @@ package com.plasticene.fast.config;
 
 import com.google.common.collect.Multimap;
 import com.plasticene.boot.web.core.filter.WebTraceFilter;
+import com.plasticene.fast.global.AccessDeniedHandlerImpl;
+import com.plasticene.fast.global.AuthenticationEntryPointImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,11 +11,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.SecurityBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.annotation.Resource;
@@ -25,6 +30,7 @@ import java.util.List;
  * @date 2023/1/3 17:26
  */
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
 
 
@@ -35,6 +41,22 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    /**
+     * 权限不够处理器 Bean
+     */
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new AccessDeniedHandlerImpl();
+    }
+
+    /**
+     * 认证失败处理类 Bean
+     */
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new AuthenticationEntryPointImpl();
     }
 
     /**
@@ -59,19 +81,21 @@ public class SecurityConfig {
      * 这里配置不认证所有接口，登录认证的逻辑保持在原有的登录过滤器即可
      */
     @Bean
-    protected SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    protected SecurityFilterChain filterChain(HttpSecurity httpSecurity, AccessDeniedHandler accessDeniedHandler,
+                                              AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
 
-//        httpSecurity
-//                // 开启跨域
-//                .cors().and()
-//                // CSRF 禁用，因为不使用 Session
-//                .csrf().disable()
-//                // 基于 token 机制，所以不需要 Session
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-//                .headers().frameOptions().disable();
+        httpSecurity
+                // 开启跨域
+                .cors().and()
+                // CSRF 禁用，使用的是 Java 代码配置 spring Security，那么 CSRF 保护默认是开启的，
+                // 那么在 POST 方式提交表单的时候就必须验证 Token，如果没有，那么自然也就是 403 没权限了。
+                .csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler);
 
 
-        // 设置每个请求的权限
+
+//        // 设置每个请求的权限
         httpSecurity
                 // ①：全局共享规则
                 .authorizeRequests()
@@ -86,16 +110,28 @@ public class SecurityConfig {
                 .antMatchers("/webjars/**").anonymous()
                 .antMatchers("/*/api-docs").anonymous()
                 .antMatchers("/druid/**").anonymous()
+                .antMatchers("/fds/test/auth/admin").permitAll() // 所有用户可访问
                 // 设置API无需认证
-                .antMatchers("/**").permitAll()
+//                .antMatchers( "/**").permitAll()
                 // ②：每个项目的自定义规则
                 .and()
                 // ③：兜底规则，必须认证
                 .authorizeRequests()
                 .anyRequest().authenticated();
-
-        // 添加 Token Filter
+//
+//        // 添加 Token Filter
 //        httpSecurity.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
+
+
+        // <X> 配置请求地址的权限
+//        httpSecurity.authorizeRequests()
+////            .antMatchers("/fds/test/auth").permitAll() // 所有用户可访问
+////            .antMatchers("/fds/test/auth/admin").hasRole("ADMIN") // 需要 ADMIN 角色
+////            .antMatchers("/fds/test/auth/normal").access("hasRole('ROLE_NORMAL')") // 需要 NORMAL 角色。
+//            // 任何请求，访问的用户都需要经过认证
+//            .anyRequest().authenticated()
+//            // <Y> 设置 Form 表单登录
+//            .and().formLogin();
         return httpSecurity.build();
     }
 
