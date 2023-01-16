@@ -6,6 +6,7 @@ import com.plasticene.boot.cache.core.manager.MultilevelCache;
 import com.plasticene.boot.redis.core.anno.DistributedLock;
 import com.plasticene.boot.redis.core.anno.RateLimit;
 import com.plasticene.boot.redis.core.enums.LimitType;
+import com.plasticene.boot.web.core.anno.ResponseResultBody;
 import com.plasticene.fast.dto.ServerInfo;
 import com.plasticene.fast.entity.DataSource;
 import com.plasticene.fast.param.DataSourceParam;
@@ -13,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/fds/test")
 @Api(tags = "测试样例管理")
 @Slf4j
+@ResponseResultBody
 public class TestController {
     @Resource
     private ExecutorService executorService;
@@ -120,6 +123,25 @@ public class TestController {
         String s = dataSource.getType().toString();
         System.out.println(s);
 
+    }
+
+
+
+    @GetMapping("/auth")
+    public String testAuth() {
+        return "auth pass, success back";
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/auth/admin")
+    public String testAuthAdmin() {
+        return "admin";
+    }
+
+    @PreAuthorize("hasRole('ROLE_NORMAL')")
+    @GetMapping("/auth/normal")
+    public String testAuthNormal() {
+        return "normal";
     }
 
 
