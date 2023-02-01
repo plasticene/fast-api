@@ -63,5 +63,10 @@ public class User extends BaseDO {
      */
     private String remark;
 
+    /**
+     * 姓名
+     */
+    private String name;
+
 
 }
