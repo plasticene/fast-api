@@ -110,9 +110,9 @@ public class SecurityConfig {
                 .antMatchers("/webjars/**").anonymous()
                 .antMatchers("/*/api-docs").anonymous()
                 .antMatchers("/druid/**").anonymous()
-                .antMatchers("/fds/test/auth/admin").permitAll() // 所有用户可访问
+//                .antMatchers("/fds/test/auth/admin").permitAll() // 所有用户可访问
                 // 设置API无需认证
-//                .antMatchers( "/**").permitAll()
+                .antMatchers( "/**").permitAll()
                 // ②：每个项目的自定义规则
                 .and()
                 // ③：兜底规则，必须认证
