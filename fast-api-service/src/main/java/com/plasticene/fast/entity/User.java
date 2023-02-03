@@ -34,14 +34,15 @@ public class User extends BaseDO {
     private String password;
 
     /**
+     * 姓名
+     */
+    private String name;
+
+    /**
      * 手机号
      */
     private String mobile;
 
-    /**
-     * 昵称
-     */
-    private String nickname;
 
     /**
      * 性别 0：男  1：女
@@ -63,10 +64,6 @@ public class User extends BaseDO {
      */
     private String remark;
 
-    /**
-     * 姓名
-     */
-    private String name;
 
 
 }

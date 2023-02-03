@@ -13,6 +13,8 @@ public interface UserConstant {
 
     Integer IS_NOT_ACTIVE = -1;
 
+    Integer IS_DELETE = -2;
+
     Integer LOGIN_TYPE_USER_NAME = 0;
 
     Integer LOGIN_TYPE_MOBILE_CODE = 1;

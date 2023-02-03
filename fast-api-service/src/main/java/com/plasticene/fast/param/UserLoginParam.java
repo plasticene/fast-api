@@ -1,5 +1,6 @@
 package com.plasticene.fast.param;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -10,7 +11,8 @@ import lombok.Data;
 
 @Data
 public class UserLoginParam {
+    @ApiModelProperty("用户名(账户)")
     private String username;
+    @ApiModelProperty("密码")
     private String password;
-
 }
