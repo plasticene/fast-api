@@ -1,6 +1,7 @@
 package com.plasticene.fast.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.AES;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.mzt.logapi.starter.annotation.LogRecord;
 import com.plasticene.boot.cache.core.manager.MultilevelCache;
 import com.plasticene.boot.redis.core.anno.DistributedLock;
@@ -24,8 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author fjzheng
@@ -44,12 +44,21 @@ public class TestController {
     @Resource
     private MultilevelCache multilevelCache;
 
+    private ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
+            .setNameFormat("letter-pool-%d").build();
+    private ExecutorService fixedThreadPool = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors()*2,
+            Runtime.getRuntime().availableProcessors() * 40,
+            0L,
+            TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<Runnable>(Runtime.getRuntime().availableProcessors() * 20),
+            namedThreadFactory);
+
 
 
     @GetMapping()
     public void test() {
         log.info("打印日志了");
-        executorService.execute(()->{
+        fixedThreadPool.execute(()->{
             log.info("异步执行了");
         });
     }
