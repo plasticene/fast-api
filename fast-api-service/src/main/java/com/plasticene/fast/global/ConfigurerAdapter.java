@@ -17,7 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @date 2022/10/31 12:00
  */
 @Configuration
-@EnableWebMvc
+//@EnableWebMvc
 public class ConfigurerAdapter implements WebMvcConfigurer {
 
 
