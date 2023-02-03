@@ -3,6 +3,9 @@ package com.plasticene.fast.dto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * @author fjzheng
  * @version 1.0
@@ -41,6 +44,12 @@ public class MenuDTO {
     private Integer status;
 
     @ApiModelProperty("创建时间")
-    private Long createTime;
+    private Date createTime;
+
+    @ApiModelProperty("是否被勾选 0:否  1：是")
+    private Integer isSelect;
+
+    @ApiModelProperty("子级菜单")
+    private List<MenuDTO> children;
 
 }
