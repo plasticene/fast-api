@@ -5,7 +5,9 @@ import com.plasticene.boot.web.core.anno.ResponseResultBody;
 import com.plasticene.fast.dto.UserDTO;
 import com.plasticene.fast.param.UserLoginParam;
 import com.plasticene.fast.param.UserParam;
+import com.plasticene.fast.param.UserRoleParam;
 import com.plasticene.fast.query.UserQuery;
+import com.plasticene.fast.service.UserRoleService;
 import com.plasticene.fast.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,6 +30,8 @@ import java.util.UUID;
 public class UserController {
     @Resource
     private UserService userService;
+    @Resource
+    private UserRoleService userRoleService;
 
 
     @ApiOperation("添加用户")
@@ -52,6 +56,12 @@ public class UserController {
     @GetMapping
     public PageResult<UserDTO> getList(UserQuery query) {
         return userService.getList(query);
+    }
+
+    @ApiOperation("分配角色")
+    @PostMapping("/role")
+    public void assignUserRole(@RequestBody UserRoleParam param) {
+        userRoleService.assignUserRole(param);
     }
 
 

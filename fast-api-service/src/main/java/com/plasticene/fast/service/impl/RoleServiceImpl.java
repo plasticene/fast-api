@@ -60,6 +60,11 @@ public class RoleServiceImpl implements RoleService {
         return new PageResult<>(roleDTOList, pageResult.getTotal(), pageResult.getPages());
     }
 
+    @Override
+    public List<RoleDTO> getRoleList(Long userId) {
+        return roleDAO.getRoleList(userId);
+    }
+
     List<RoleDTO> toRoleDTOList(List<Role> roles) {
         List<RoleDTO> roleDTOList = new ArrayList<>();
         if (CollectionUtils.isEmpty(roles)) {

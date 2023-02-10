@@ -8,10 +8,13 @@ import com.plasticene.boot.common.utils.PtcBeanUtils;
 import com.plasticene.boot.mybatis.core.query.LambdaQueryWrapperX;
 import com.plasticene.fast.constant.UserConstant;
 import com.plasticene.fast.dao.UserDAO;
+import com.plasticene.fast.dto.RoleDTO;
 import com.plasticene.fast.dto.UserDTO;
 import com.plasticene.fast.entity.User;
 import com.plasticene.fast.param.UserParam;
 import com.plasticene.fast.query.UserQuery;
+import com.plasticene.fast.service.RoleService;
+import com.plasticene.fast.service.UserRoleService;
 import com.plasticene.fast.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +33,10 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Resource
     private UserDAO userDAO;
+    @Resource
+    private UserRoleService userRoleService;
+    @Resource
+    private RoleService roleService;
 
 
     @Override
@@ -57,6 +64,9 @@ public class UserServiceImpl implements UserService {
         checkUsernameUnique(username);
         User user = PtcBeanUtils.copy(param, User.class);
         userDAO.insert(user);
+        if (!CollectionUtils.isEmpty(param.getRoleIds())) {
+            userRoleService.addUserRole(user.getId(), param.getRoleIds());
+        }
     }
 
     @Override
@@ -65,6 +75,10 @@ public class UserServiceImpl implements UserService {
         User user = PtcBeanUtils.copy(param, User.class);
         user.setId(id);
         userDAO.updateById(user);
+        if (!CollectionUtils.isEmpty(param.getRoleIds())) {
+            userRoleService.deleteUserRole(id);
+            userRoleService.addUserRole(id, param.getRoleIds());
+        }
     }
 
     @Override
@@ -74,6 +88,7 @@ public class UserServiceImpl implements UserService {
         user.setId(id);
         user.setStatus(UserConstant.IS_DELETE);
         userDAO.updateById(user);
+        userRoleService.deleteUserRole(id);
     }
 
     @Override
@@ -104,6 +119,8 @@ public class UserServiceImpl implements UserService {
         }
         users.forEach(user -> {
             UserDTO userDTO = PtcBeanUtils.copy(user, UserDTO.class);
+            List<RoleDTO> roleList = roleService.getRoleList(user.getId());
+            userDTO.setRoleList(roleList);
             userDTOList.add(userDTO);
         });
         return userDTOList;

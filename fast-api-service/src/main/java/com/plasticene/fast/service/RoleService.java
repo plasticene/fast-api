@@ -21,4 +21,6 @@ public interface RoleService {
     void deleteRole(Long id);
 
     PageResult<RoleDTO> getList(RoleQuery query);
+
+    List<RoleDTO> getRoleList(Long userId);
 }
