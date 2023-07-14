@@ -1,15 +1,8 @@
 package com.plasticene.fast.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.toolkit.AES;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.CacheLoader;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.mzt.logapi.starter.annotation.LogRecord;
-import com.plasticene.boot.cache.core.listener.CaffeineCacheRemovalListener;
 import com.plasticene.boot.cache.core.manager.MultilevelCache;
 import com.plasticene.boot.common.pojo.ResponseVO;
 import com.plasticene.boot.redis.core.anno.DistributedLock;
@@ -21,21 +14,15 @@ import com.plasticene.boot.web.core.prop.ApiSecurityProperties;
 import com.plasticene.boot.web.core.utils.AESUtil;
 import com.plasticene.boot.web.core.utils.RSAUtil;
 import com.plasticene.boot.web.core.utils.SignUtil;
-import com.plasticene.fast.dto.ServerInfo;
-import com.plasticene.fast.dto.WorkshopDTO;
 import com.plasticene.fast.entity.DataSource;
 import com.plasticene.fast.entity.User;
-import com.plasticene.fast.feign.WorkshopService;
 import com.plasticene.fast.param.DataSourceParam;
 import com.plasticene.fast.query.BaseQuery;
-import com.plasticene.fast.query.UserQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.beans.factory.annotation.Lookup;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
@@ -66,12 +53,8 @@ public class TestController {
     private MultilevelCache multilevelCache;
 
     @Resource
-    private ApiSecurityProperties apiSecurityProperties;
-    @Resource
-    private WorkshopService workshopService;
+    private ApiSecurityProperties apiSecurityProperties;;
 
-//    @Resource
-//    private TestController testController;
 
     private ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
             .setNameFormat("letter-pool-%d").build();
@@ -221,21 +204,6 @@ public class TestController {
         System.out.println(user);
         return user;
     }
-
-
-    @GetMapping("/trace")
-    public void testTrace() {
-        log.info("开始执行咯");
-        BaseQuery query = new BaseQuery();
-        ResponseVO<List<WorkshopDTO>> responseVO = workshopService.getList();
-        log.info("接口返回结果：{}", responseVO);
-    }
-
-
-
-
-
-
 
 
 
