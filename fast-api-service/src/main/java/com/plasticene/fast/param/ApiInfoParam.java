@@ -17,28 +17,28 @@ import java.util.List;
 public class ApiInfoParam {
 
     @ApiModelProperty("api名称")
-    @NotBlank
+    @NotBlank(message = "api名称不能为空")
     private String name;
     @ApiModelProperty("api路径")
-    @NotBlank
+    @NotBlank(message = "api路径不能为空")
     private String path;
     @ApiModelProperty("api类型 0：get  1：post")
-    @NotNull
+    @NotNull(message = "api类型不能为空")
     private Integer type;
     @ApiModelProperty("数据源id")
-    @NotNull
+    @NotNull(message = "数据源id不能为空")
     private Long dataSourceId;
     @ApiModelProperty("数据库")
-    @NotBlank
+    @NotBlank(message = "数据库不能为空")
     private String databaseName;
     @ApiModelProperty("SQL语句")
-    @NotBlank
+    @NotBlank(message = "sql语句不能为空")
     private String sqlContent;
     @ApiModelProperty("api参数")
     private List<Parameter> param;
     @ApiModelProperty("api响应结果")
     private String response;
     @ApiModelProperty("api分组")
-    @NotNull
+    @NotNull(message = "分组不能为空")
     private Long folderId;
 }

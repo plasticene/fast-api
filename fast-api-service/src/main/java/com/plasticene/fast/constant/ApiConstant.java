@@ -11,4 +11,7 @@ public interface ApiConstant {
     Integer API_STATUS_RELEASE = 1;
     Integer API_STATUS_CHANGE = 2;
     Integer API_STATUS_OFFLINE = 3;
+
+    Integer TYPE_GET = 0;
+    Integer TYPE_POST = 1;
 }

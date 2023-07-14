@@ -10,6 +10,7 @@ import com.plasticene.fast.entity.Role;
 import com.plasticene.fast.param.RoleParam;
 import com.plasticene.fast.query.RoleQuery;
 import com.plasticene.fast.service.RoleService;
+import com.plasticene.fast.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -27,6 +28,8 @@ import java.util.List;
 public class RoleServiceImpl implements RoleService {
     @Resource
     private RoleDAO roleDAO;
+//    @Resource
+//    private UserService userService;
 
 
     @Override

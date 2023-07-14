@@ -11,6 +11,7 @@ import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.alibaba.druid.util.JdbcUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -51,7 +52,7 @@ public class DynamicSqlParser {
             for(String where : wheres) {
                 // 没有传这个参数，那么把这个条件变成1=1
                 String field = var.substring(2, var.length() - 1);
-                if (!params.containsKey(field)) {
+                if (!params.containsKey(field) || StringUtils.isBlank(params.get(field))) {
                     replaceWhere = CONSTANT_CONDITION;
                 } else {
                     replaceWhere = where.replace(var, params.get(field));

@@ -95,6 +95,9 @@ public class SqlQueryServiceImpl implements SqlQueryService {
             Map<String, String> map = new HashMap<>();
             sqlParam.forEach(parameter -> {
                 String value = parameter.getValue();
+                if (StringUtils.isBlank(value)) {
+                    return;
+                }
                 String type = parameter.getType();
                 if (Objects.equals(type, "string") || Objects.equals(type, "date")) {
                     value = "'" + value + "'";

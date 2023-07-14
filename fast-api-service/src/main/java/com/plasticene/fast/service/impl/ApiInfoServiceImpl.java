@@ -73,6 +73,11 @@ public class ApiInfoServiceImpl implements ApiInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long addApiInfo(ApiInfoParam param) {
+        String path = param.getPath();
+        ApiInfo info = getApiInfoByPath(path);
+        if (Objects.nonNull(info)) {
+            throw new BizException("路径已存在，请修改");
+        }
         ApiInfo apiInfo = PtcBeanUtils.copy(param, ApiInfo.class);
         apiInfoDAO.insert(apiInfo);
         return apiInfo.getId();
@@ -209,6 +214,12 @@ public class ApiInfoServiceImpl implements ApiInfoService {
             apiInfoDTO.setIsPass(true);
         }
         return apiInfoDTO;
+    }
+
+    @Override
+    public ApiInfo getApiInfoByPath(String path) {
+        ApiInfo apiInfo = apiInfoDAO.selectOne("path", path);
+        return apiInfo;
     }
 
     List<ApiInfoDTO> toApiInfoDTOList(List<ApiInfo> apiInfos) {

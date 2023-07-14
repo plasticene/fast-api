@@ -3,6 +3,7 @@ package com.plasticene.fast.service;
 import com.plasticene.boot.common.pojo.PageResult;
 import com.plasticene.fast.dto.ApiInfoDTO;
 import com.plasticene.fast.dto.ApiReleaseDTO;
+import com.plasticene.fast.entity.ApiInfo;
 import com.plasticene.fast.param.ApiInfoParam;
 import com.plasticene.fast.query.ApiInfoQuery;
 
@@ -30,6 +31,8 @@ public interface ApiInfoService {
     PageResult<ApiInfoDTO> getList(ApiInfoQuery query);
 
     ApiInfoDTO getApiInfo(Long id);
+
+    ApiInfo getApiInfoByPath(String path);
 
 
 
