@@ -8,6 +8,7 @@ import com.plasticene.boot.common.pojo.ResponseVO;
 import com.plasticene.boot.redis.core.anno.DistributedLock;
 import com.plasticene.boot.redis.core.anno.RateLimit;
 import com.plasticene.boot.redis.core.enums.LimitType;
+import com.plasticene.boot.web.core.anno.ApiLog;
 import com.plasticene.boot.web.core.anno.ApiSecurity;
 import com.plasticene.boot.web.core.anno.ResponseResultBody;
 import com.plasticene.boot.web.core.prop.ApiSecurityProperties;
@@ -18,11 +19,15 @@ import com.plasticene.fast.entity.DataSource;
 import com.plasticene.fast.entity.User;
 import com.plasticene.fast.param.DataSourceParam;
 import com.plasticene.fast.query.BaseQuery;
+import com.plasticene.fast.service.AuthService;
+import com.plasticene.fast.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
@@ -46,14 +51,24 @@ import java.util.concurrent.*;
 @Slf4j
 @ResponseResultBody
 public class TestController {
-    @Resource
-    private ExecutorService executorService;
 
+    @Resource
+    private UserService userService;
+//
+//    @Resource
+//    private AuthService authService;
+//
+//    @Resource
+//    private ExecutorService executorService;
+//
     @Resource
     private MultilevelCache multilevelCache;
 
-    @Resource
-    private ApiSecurityProperties apiSecurityProperties;;
+//    @Autowired
+//    private ApiSecurityProperties apiSecurityProperties;
+
+//    @Autowired
+//    private User user;
 
 
     private ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
@@ -68,7 +83,7 @@ public class TestController {
 
 
     @GetMapping("/async")
-    @Lookup
+//    @Lookup
     public void testAsync() {
         log.info("打印日志了");
         fixedThreadPool.execute(()->{
@@ -83,14 +98,14 @@ public class TestController {
         });
     }
 
-    @RateLimit( period = 10, count = 3)
+    @RateLimit(period = 30, count = 3)
     @GetMapping("/test1")
     public int testLimiter1() {
         return 1;
     }
 
 
-    @RateLimit(key = "customer_limit_test", period = 10, count = 3, limitType = LimitType.CUSTOMER)
+    @RateLimit(key = "custom_limit_test", period = 30, count = 3, limitType = LimitType.CUSTOMER)
     @GetMapping("/test2")
     public int testLimiter2() {
 
@@ -98,7 +113,7 @@ public class TestController {
     }
 
 
-    @RateLimit(key = "ip_limit_test", period = 10, count = 3, limitType = LimitType.IP)
+    @RateLimit(key = "ip_limit_test", period = 30, count = 3, limitType = LimitType.IP, prefix = "hello")
     @GetMapping("/test3")
     public int testLimiter3() {
 
@@ -115,7 +130,7 @@ public class TestController {
     }
 
     @GetMapping("/put/cache")
-    public void put() {
+    public void putCache() {
         DataSource ds = new DataSource();
         ds.setName("多级缓存");
         ds.setType(1);
@@ -125,12 +140,12 @@ public class TestController {
     }
 
     @GetMapping("/get/cache")
-    public DataSource get() {
+    public DataSource getCache() {
         DataSource dataSource = multilevelCache.get("test-key", DataSource.class);
         return dataSource;
     }
 
-    @RateLimit( period = 10, count = 3)
+//    @RateLimit( period = 10, count = 3)
     @DistributedLock(key = "distributed-lock")
     @GetMapping("/lock")
     public void lock() {
@@ -202,6 +217,21 @@ public class TestController {
     @ApiSecurity(encryptResponse = true, decryptRequest = true)
     public User testSign(@RequestBody User user) {
         System.out.println(user);
+        return user;
+    }
+
+    @PostMapping("/test/api/log")
+    @ApiLog
+    public User printApiLog(@RequestBody User user) throws InterruptedException {
+        log.info("api log打印啦....");
+        TimeUnit.SECONDS.sleep(1);
+        return user;
+    }
+
+    @GetMapping("/user/cache")
+    @Cacheable(value = "USER:", key = "#user.id")
+    public User testUserCache(User user) {
+        user.setCreateTime(new Date());
         return user;
     }
 
