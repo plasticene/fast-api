@@ -209,13 +209,16 @@
 
     <springProfile name="test">
         <logger name="com.plasticene.fast" level="info"/>
+        <logger name="ptc.api.log" level="info" additivity="false">
+            <Appender-ref ref="CONSOLE"/>
+            <appender-ref ref="INTERFACE_FILE"/>
+        </logger>
         <root level="info">
             <appender-ref ref="CONSOLE" />
             <appender-ref ref="DEBUG_FILE" />
             <appender-ref ref="INFO_FILE" />
             <appender-ref ref="WARN_FILE" />
             <appender-ref ref="ERROR_FILE" />
-            <appender-ref ref="INTERFACE_FILE" />
         </root>
     </springProfile>
 
